@@ -1,0 +1,51 @@
+NAME=a.out
+
+CC = clang
+CFLAGS = -MD -Wall -Wextra -Wpedantic -Wno-newline-eof -std=c11 -I./libft/ -I./includes/
+LDFLAGS = -lreadline # -fsanitize=address -fsanitize=undefined
+
+FILES = run.c execute.c vector_subset.c process.c hash_func.c \
+		process_symbols.c subshell.c ft_transmit.c start_interactive.c \
+		get_shell_input.c env_vars.c main.c search_env_vars.c \
+		redirect.c segment.c cleanup.c preprocess.c ft_pipe.c \
+		builtin_echo.c builtin_env.c builtin_exit.c builtin_export.c \
+		builtin_pwd.c builtin_unset.c builtin_cd.c
+
+OUTPUTDIR = ./bin
+
+VPATH = ./src/ ./src/builtins
+
+LIBFT = $(OUTPUTDIR)/libft.a
+
+OBJ=$(FILES:%.c=$(OUTPUTDIR)/%.o)
+DEPS=$(OBJ:.o=.d)
+
+$(OUTPUTDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+all: $(NAME)
+
+$(LIBFT):
+	make all -C ./libft/
+	mkdir -p $(OUTPUTDIR)
+	mv libft/libft.a $(LIBFT)
+
+$(NAME): $(LIBFT) $(OBJ)
+	$(CC) $(OBJ) $(LIBFT) $(LDFLAGS) -o $(NAME)
+
+clean:
+	-rm -f $(OBJ) $(DEPS) $(LIBFT)
+	-rm -d $(OUTPUTDIR)
+	-make clean -C./libft/
+
+fclean: clean
+	rm -f $(NAME)
+
+re: fclean all
+
+syntax:
+	$(CC) -fsyntax-only -I./libft/ -I./includes/ -Weverything -Wno-newline -Wno-padded src/**.c
+
+.PHONEY: fclean clean all re
+
+-include $(DEPS)
