@@ -1,4 +1,4 @@
-NAME=a.out
+NAME=minishell
 
 CC = clang
 CFLAGS = -MD -Wall -Wextra -Wpedantic -Wno-newline-eof -std=c11 -I./libft/ -I./includes/
