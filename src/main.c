@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 17:34:03 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:47:03 by akernot          ###   ########.fr       */
+/*   Updated: 2024/05/01 16:49:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <stdlib.h>
 
 #include "libft.h"
 #include "minishell.h"
@@ -27,12 +28,20 @@
  * splash screen or prompt. It will then run the single command passed in before
  * terminating minishell
 */
-static void	start_stream(void)
+static int	start_stream(void)
 {
 	char	*input;
+	int		last_return;
 
+	last_return = 0;
 	input = get_next_line(STDIN_FILENO);
-	run(input);
+	while (input != NULL)
+	{
+		last_return = run(input);
+		free (input);
+		input = get_next_line(STDIN_FILENO);
+	}
+	return last_return;
 }
 
 /**
@@ -49,10 +58,10 @@ int	main(int ac, char *const av[], char *const envp[])
 	if (isatty(STDIN_FILENO) == true && isatty(STDOUT_FILENO) == true)
 	{
 		start_interactive();
-		rl_clear_history();
+		clear_history();
 	}
 	else
-		start_stream();
+		return (start_stream());
 	clear_env_vars();
 	return (0);
 }

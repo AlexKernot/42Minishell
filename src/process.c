@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 23:17:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/02/01 19:12:30 by akernot          ###   ########.fr       */
+/*   Updated: 2024/05/01 16:48:36 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ static void	clear_segment(t_segment *array, int len)
  * kill a running command without disrupting the terminal.
  * @param input the full command to parse and run.
 */
-void	run(char *input)
+int	run(char *input)
 {
 	static int	last_return = 0;
 	t_vector	*split;
@@ -148,7 +148,7 @@ void	run(char *input)
 	int			num_sub_commands;
 
 	if (input == NULL || input[0] == '\0' || input[0] == '\n')
-		return ;
+		return (0);
 	split = tokenizer(input);
 	processed = process_symbols(split, last_return);
 	vector_dtor(&split);
@@ -160,4 +160,5 @@ void	run(char *input)
 		last_return = create_subshells(sub_commands, num_sub_commands);
 	vector_dtor(&processed);
 	clear_segment(sub_commands, num_sub_commands);
+	return (last_return);
 }

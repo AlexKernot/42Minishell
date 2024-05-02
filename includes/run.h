@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:59:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/25 19:08:37 by akernot          ###   ########.fr       */
+/*   Updated: 2024/05/01 16:48:10 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "segment.h"
 
-void		run(char *input);
+int			run(char *input);
 void		run_command(t_segment *segment);
 int			create_subshells(t_segment *input, int size);
 int			run_without_subshell(t_segment *segment);

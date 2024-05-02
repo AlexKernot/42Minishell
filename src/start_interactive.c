@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_interactive.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 16:59:10 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:48:48 by akernot          ###   ########.fr       */
+/*   Updated: 2024/05/01 15:31:50 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@
 */
 static void	splash_screen(void)
 {
-	printf("\nWelcome to\n");
-	printf(" __  __ _       _     _          _ _ \n");
-	printf("|  \\/  (_)     (_)   | |        | | |\n");
-	printf("| \\  / |_ _ __  _ ___| |__   ___| | |\n");
-	printf("| |\\/| | | '_ \\| / __| '_ \\ / _ \\ | |\n");
-	printf("| |  | | | | | | \\__ \\ | | |  __/ | |\n");
-	printf("|_|  |_|_|_| |_|_|___/_| |_|\\___|_|_|\n\n");
+	write(STDERR_FILENO, "\nWelcome to\n", 13);
+	write(STDERR_FILENO, " __  __ _       _     _          _ _ \n", 39);
+	write(STDERR_FILENO, "|  \\/  (_)     (_)   | |        | | |\n", 39);
+	write(STDERR_FILENO, "| \\  / |_ _ __  _ ___| |__   ___| | |\n", 39);
+	write(STDERR_FILENO, "| |\\/| | | '_ \\| / __| '_ \\ / _ \\ | |\n", 39);
+	write(STDERR_FILENO, "| |  | | | | | | \\__ \\ | | |  __/ | |\n", 39);
+	write(STDERR_FILENO, "|_|  |_|_|_| |_|_|___/_| |_|\\___|_|_|\n\n", 40);
 }
 
 /** 
