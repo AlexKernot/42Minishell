@@ -1,0 +1,52 @@
+Env vars should already be expanded
+There should be a handler for individual commands
+
+A pipeline is run on subshells while an individual command is run on the shell process.
+
+Store pointer to current command
+
+Precedence:
+	0: < > << >>
+	1: |
+	2: || &&
+
+While token stack has elements:
+	If the token is a word:
+		If the current command pointer is null:
+			Create a new command pointer, push it to the output queue.
+		Add to command arguments
+	If the token is a redirect symbol:
+		assert the next token is a word, adding the word to the redirect section of the command
+	If the token is `|` `||` `&&`:
+		If the operator stack has one of these operators already in it:
+			Push all the operators with a precedence greater than or equal to the current operator onto the output queue
+			Push the operator onto the operator stack
+			Set the current command pointer to NULL
+	If the token is `(`:
+		Add the token to the operator stack
+		Set current command pointer to NULL
+	If the token is `)`:
+		Push tokens from the operator stack until a left parentheses is found.
+		Discard both parentheses
+		Set the current command pointer to NULL
+		If none are found:
+			Syntax error
+
+Once token stack is empty:
+	Push elements from operator stack onto output queue.
+	If a left parentheses is found:
+		Syntax error
+
+
+run:
+	if the output queue is of size 1:
+		run simple command in the current shell env
+		done
+
+	while the queue is not empty:
+		If the token is a command
+			Push token onto stack
+		If the token is an operator
+			Pop the required number of commands from the stack and evaluate
+			If the required number of commands aren't available:
+				Syntax error
