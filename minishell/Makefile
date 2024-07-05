@@ -9,11 +9,12 @@ FILES = run.c execute.c vector_subset.c process.c hash_func.c \
 		get_shell_input.c env_vars.c main.c search_env_vars.c \
 		redirect.c segment.c cleanup.c preprocess.c ft_pipe.c \
 		builtin_echo.c builtin_env.c builtin_exit.c builtin_export.c \
-		builtin_pwd.c builtin_unset.c builtin_cd.c
+		builtin_pwd.c builtin_unset.c builtin_cd.c \
+		tokenizer.c
 
 OUTPUTDIR = ./bin
 
-VPATH = ./src/ ./src/builtins
+VPATH = ./src/ ./src/builtins ./src/tokenizer
 
 LIBFT = $(OUTPUTDIR)/libft.a
 
@@ -32,6 +33,9 @@ $(LIBFT):
 
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(OBJ) $(LIBFT) $(LDFLAGS) -o $(NAME)
+
+lib: $(LIBFT) $(OBJ)
+	ar -rcs minishell.a $(OBJ)
 
 clean:
 	-rm -f $(OBJ) $(DEPS) $(LIBFT)
