@@ -6,7 +6,7 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/07/05 17:26:15 by akernot          ###   ########.fr        #
+#    Updated: 2024/07/06 15:28:41 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ LDFLAGS = -lreadline
 
 OUTPUTDIR = ./bin
 
-TESTS = runTests.cpp copyStringTest.cpp extractStringTests.cpp
+TESTS = runTests.cpp copyStringTest.cpp extractStringTests.cpp getTypeTests.cpp
 VPATH = ./tests/
 OBJ = $(TESTS:%.cpp=$(OUTPUTDIR)/%.o)
 
