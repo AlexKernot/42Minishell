@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 18:44:40 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/05 18:22:57 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/07 16:14:53 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,6 @@
 
 #include "libft.h"
 #include "tokenizer.h"
-
-void	add_token(t_token_list *token_list, const char *string)
-{
-	(void)token_list;
-	(void)string;
-	return ;
-}
 
 /**
  * 
@@ -106,7 +99,7 @@ void add_words(t_token_list *tokens, const char *string,
 		if (string[i] == ' ')
 		{
 			++i;
-			add_token(tokens, extract_string(string, j, i));
+			push_token(tokens, extract_string(string, j, i));
 			j = i;
 			continue;
 		}
@@ -131,7 +124,7 @@ void	add_symbols(t_token_list *tokens, const char *string,
 		if (last_symbol != get_symbols(string[i]))
 		{
 			++i;
-			add_token(tokens, extract_string(string, j, i));
+			push_token(tokens, extract_string(string, j, i));
 			j = i;
 			continue;
 		}
@@ -175,7 +168,7 @@ t_token_list	*tokenize(const char *string)
 		return (NULL);
 	token_list->array = malloc(sizeof(token_list->array) * 10);
 	token_list->capacity = 10;
-	token_list->length = 0;
+	token_list->size = 0;
 	parse(token_list, string);
 	return (token_list);
 }
