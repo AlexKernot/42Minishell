@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 17:14:52 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/05 18:25:43 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/08 13:10:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,7 @@
 #include <iostream>
 
 #include <unistd.h>
-
-bool returnNull = false;
-char fakeAlloc[15] = {0};
-
-extern "C" void *malloc(size_t size) {
-	std::cout << " (Using fake malloc, null=" << returnNull << ") ";
-	// clear the data in fake alloc just in case
-	for (std::size_t i = 0; i < sizeof(fakeAlloc); ++i)
-		fakeAlloc[i] = '\0';
-	if (returnNull == true)
-		return NULL;
-	(void)size;
-	return fakeAlloc;
-}
+#include <stdlib.h>
 
 extern "C" char *extract_string(const char *string, const uint16_t start, const uint16_t end);
 
@@ -81,9 +68,9 @@ std::pair<int, int> extractStringTest(bool debug)
 	int testsPassed = 0;
 	runExtractString(NULL, 0, 1, "(NULL)", debug) == false ? testsFailed++ : testsPassed++;
 	// Test a failed malloc
-	returnNull = true;
+	malloc_return_null();
 	runExtractString(src, 0, 1, "(NULL)", debug) == false ? testsFailed++ : testsPassed++;
-	returnNull = false;
+	malloc_revert();
 	runExtractString(src, 1, 0, "(NULL)", debug) == false ? testsFailed++ : testsPassed++;
 	runExtractString(src, 3, 1, "(NULL)", debug) == false ? testsFailed++ : testsPassed++;
 	runExtractString(src, 10000, 10001, "(NULL)", debug) == false ? testsFailed++ : testsPassed++;

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/06 15:28:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/08 13:04:51 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,17 @@ int main(int ac, char *av[])
 	if (ac == 2 && std::string(av[1]) == "d") {
 		debug = true;
 	}
+	malloc_init();
 	std::vector<std::pair<int, int>> results;
+	results.push_back(fakeMallocFreeTest());
 	results.push_back(copyStringTest(debug));
 	results.push_back(extractStringTest(debug));
 	results.push_back(runTypeTests());
 	
-	std::cout << "\n\ncopy_string: " << results[0].first << " passed " << results[0].second << " failed.\n";
-	std::cout << "extract_string: " << results[1].first << " passed " << results[1].second << " failed.\n";
-	std::cout << "type tests: " << results[2].first << " passed " << results[2].second << " failed.\n";
+	std::cout << "\n\nmalloc and free tests: " << results[0].first << " passed " << results[0].second << " failed.\n";
+	std::cout << "copy_string: " << results[1].first << " passed " << results[1].second << " failed.\n";
+	std::cout << "extract_string: " << results[2].first << " passed " << results[2].second << " failed.\n";
+	std::cout << "type tests: " << results[3].first << " passed " << results[3].second << " failed.\n";
 	std::cout << "\n";
 	return 0;
 }
