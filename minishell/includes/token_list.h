@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 17:28:49 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/07 16:15:24 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:18:48 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_token_list
 	uint16_t	capacity;
 }	t_token_list;
 
+t_token_list	*create_token_list(void);
 void		push_token(t_token_list *token_list, const char *string);
 const char	*get_token(t_token_list *token_list, uint16_t index);
 void		delete_token_list(t_token_list **token_list);

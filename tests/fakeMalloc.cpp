@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:29:19 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/08 13:10:51 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:59:58 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void malloc_init()
 	{
 		alloc_addr[i] = -1;
 	}
-	std::cout << "Address at " << (uint64_t)fake_heap << std::endl;
 }
 
 void print_malloc()
@@ -50,7 +49,8 @@ void check_mem()
 	{
 		if (alloc_addr[i] != -1) {
 			std::cerr << "Memory leak\n";
-			exit(1);
+			print_malloc();
+			abort();
 		}
 	}
 }
@@ -85,11 +85,9 @@ int is_free(size_t start, size_t size)
 		}
 		if (alloc_addr[start + i] != -1)
 		{
-			write(STDOUT_FILENO, "Not free\n", 9);
 			return (0);
 		}
 	}
-	write(STDOUT_FILENO, "Free\n", 5);
 	return 1;
 }
 
@@ -121,7 +119,7 @@ void *malloc(size_t size)
 			keep_reading = 1;
 		}
 	}
-	write(2, "Malloc ran out of space.", 25);
+	write(2, "Malloc ran out of space.\n", 25);
 	abort();
 }
 
@@ -129,25 +127,25 @@ void free(void *ptr)
 {
 	if (ptr == NULL)
 	{
-		write(2, "Free tried freeing NULL", 24);
+		write(2, "Free tried freeing NULL\n", 24);
 		abort();
 	}
 	if (ptr < fake_heap || ptr > fake_heap + sizeof(fake_heap))
 	{
-		write(2, "Freeing outside heap area", 26);
+		write(2, "Freeing outside heap area\n", 26);
 		abort();
 	}
 	size_t index = (uint64_t)ptr - (uint64_t)fake_heap;
 	if (index > sizeof(fake_heap))
 	{
-		write(2, "Freeing outside area", 21);
+		write(2, "Freeing outside area\n", 21);
 		abort();
 	}
 	for (size_t i = 0;
-		index + i >= sizeof(fake_heap) && fake_heap[index + i] != -1;
+		index + i <= sizeof(fake_heap) && alloc_addr[index + i] != -1;
 		++i)
 	{
-		fake_heap[index + 1] = -1;
+		alloc_addr[index + i] = -1;
 	}
 }
 }
