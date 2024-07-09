@@ -6,7 +6,7 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/07/09 17:33:38 by akernot          ###   ########.fr        #
+#    Updated: 2024/07/09 17:47:15 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ LDFLAGS = -lreadline
 OUTPUTDIR = ./bin
 
 TESTS = runTests.cpp copyStringTest.cpp extractStringTests.cpp getTypeTests.cpp \
-fakeMalloc.cpp fakeMemoryTest.cpp tokenListTests.cpp
+fakeMalloc.cpp fakeMemoryTest.cpp tokenListTests.cpp addSymbolAndWordTest.cpp
 VPATH = ./tests/
 OBJ = $(TESTS:%.cpp=$(OUTPUTDIR)/%.o)
 
