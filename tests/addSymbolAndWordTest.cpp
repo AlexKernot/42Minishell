@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 17:46:25 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/09 19:06:30 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/10 15:56:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ extern "C" {
 	#include "tokenizer.h"	
 }
 
-void print_list(t_token_list *list)
+static void print_list(t_token_list *list)
 {
 	std::cout << "{";
 	for (uint16_t i = 0; i < list->size; ++i)
@@ -32,7 +32,7 @@ void print_list(t_token_list *list)
 	std::cout << "}" << std::endl;
 }
 
-bool operator==(const t_token_list *a, const std::vector<std::string>& b)
+static bool operator==(const t_token_list *a, const std::vector<std::string>& b)
 {
 	if (a->size != b.size())
 		return false;
@@ -44,14 +44,14 @@ bool operator==(const t_token_list *a, const std::vector<std::string>& b)
 	return true;
 }
 
-bool operator!=(const t_token_list *a, const std::vector<std::string>& b)
+static bool operator!=(const t_token_list *a, const std::vector<std::string>& b)
 {
 	if (a == b)
 		return false;
 	return true;
 }
 
-bool addSymbolTest(const char *string, const uint16_t start,
+static bool addSymbolTest(const char *string, const uint16_t start,
 		const uint16_t end, std::vector<std::string> cmp)
 {
 	pid_t pid = fork();
@@ -68,7 +68,7 @@ bool addSymbolTest(const char *string, const uint16_t start,
 	return returnWait(pid);
 }
 
-bool addWordTest(const char *string, const uint16_t start,
+static bool addWordTest(const char *string, const uint16_t start,
 		const uint16_t end, std::vector<std::string> cmp)
 {
 	pid_t pid = fork();
