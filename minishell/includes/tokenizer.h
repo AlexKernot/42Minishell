@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 15:18:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/06 17:30:19 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 16:23:31 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef enum e_symbols
 	out_s,
 	pipe_s,
 	and_s,
-	quote_s
+	bracket_s
 }	t_symbols;
 
 /**
@@ -91,7 +91,7 @@ char			*extract_string(const char *string,
  */	
 void			add_words(t_token_list *tokens, const char *string,
 					const uint16_t start, const uint16_t end);
-					
+	
 /**
  * @author Alex Kernot
  * @brief Splits part of a string containing symbols into smaller strings
@@ -104,7 +104,7 @@ void			add_words(t_token_list *tokens, const char *string,
  */
 void			add_symbols(t_token_list *tokens, const char *string,
 					const uint16_t start, const uint16_t end);
-					
+			
 /**
  * @author Alex Kernot
  * @brief Iterates over the string, splitting it into smaller substrings to be

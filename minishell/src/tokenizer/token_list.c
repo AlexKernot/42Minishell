@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 17:50:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/09 17:39:59 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/09 17:56:33 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ void		delete_token_list(t_token_list **token_list)
 	*token_list = NULL;
 }
 
-uint16_t	token_list_size(t_token_list *token_list)
+uint16_t	token_list_size(const t_token_list *token_list)
 {
 	if (token_list == NULL)
 		return (0);
 	return (token_list->size);
 }
 
-const char	*get_token(t_token_list *token_list, uint16_t index)
+const char	*get_token(const t_token_list *token_list, uint16_t index)
 {
 	if (token_list == NULL || token_list->array == NULL)
 		return (NULL);

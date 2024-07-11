@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:07:24 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/11 15:45:18 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 16:41:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,9 @@ std::pair<int, int> parseTest()
 	runParse("Hello||Test<a>b<<c", {"Hello", "||", "Test", "<", "a", ">", "b", "<<", "c"}) == false ? testsFailed++ : testsPassed++;
 	runParse("\"This needs to be one string\"", {"This needs to be one string"}) == false ? testsFailed++ : testsPassed++;
 	runParse("\'This needs to be one string\'", {"This needs to be one string"}) == false ? testsFailed++ : testsPassed++;
-	runParse("\"This 'needs' to be one string\"", {"This'needs' to be one string"}) == false ? testsFailed++ : testsPassed++;
+	runParse("\"This 'needs' to be one string\"", {"This 'needs' to be one string"}) == false ? testsFailed++ : testsPassed++;
 	runParse("\'This \"needs\" to be one string\'", {"This \"needs\" to be one string"}) == false ? testsFailed++ : testsPassed++;
+	runParse("stuff<a.out\'This \"needs\" to be one string\'yess", {"stuff", "<", "a.out", "This \"needs\" to be one string", "yess"}) == false ? testsFailed++ : testsPassed++;
 
 	return {testsPassed, testsFailed};
 }
