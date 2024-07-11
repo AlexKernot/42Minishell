@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 18:44:40 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/11 16:46:23 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 16:57:25 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,11 @@ uint16_t split(t_token_list *token_list, const char *string, const uint16_t star
 	if (token_list == NULL || token_list->array == NULL || string == NULL)
 		return (0);
 	i = start + 1;
+	if (type == symbol_c && get_symbols(string[start]) == bracket_s)
+	{
+		add_symbols(token_list, string, start, i);
+		return (i);
+	}
 	while (i < string_len && string[i] != '\0'
 		&& get_char_type(string[i]) == (uint16_t)type)
 	{

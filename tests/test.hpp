@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/09 19:10:48 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 17:00:47 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,19 @@
 
 # include <string>
 
+extern "C" { 
+	#include "tokenizer.h"
+}
+
 // helper functions used for testing
 std::string sanitizeString(const char *dest);
 bool returnWait(pid_t pid);
 void print_malloc();
 void malloc_init();
 void check_mem();
+void print_list(t_token_list *list, std::vector<std::string> cmp);
+bool operator==(const t_token_list *a, const std::vector<std::string>& b);
+bool operator!=(const t_token_list *a, const std::vector<std::string>& b);
 extern "C" void malloc_return_null();
 extern "C" void malloc_revert();
 

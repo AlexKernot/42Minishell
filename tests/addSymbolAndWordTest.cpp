@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 17:46:25 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/10 18:20:23 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 17:01:00 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,40 +22,6 @@ extern "C" {
 	#include "tokenizer.h"	
 }
 
-static void print_list(t_token_list *list)
-{
-	std::cout << "{";
-	for (uint16_t i = 0; i < list->size; ++i)
-	{
-		std::cout << "\'" << list->array[i].content << "\' ";
-	}
-	std::cout << "}" << std::endl;
-}
-
-static bool operator==(const t_token_list *a, const std::vector<std::string>& b)
-{
-	if (a == NULL) {
-		if (b.empty() == true)
-			return true;
-		return false;
-	}
-	if (a->size != b.size())
-		return false;
-	for (std::size_t i = 0; i < b.size(); ++i)
-	{
-		if (get_token(a, i) != b.at(i))
-			return false;
-	}
-	return true;
-}
-
-static bool operator!=(const t_token_list *a, const std::vector<std::string>& b)
-{
-	if (a == b)
-		return false;
-	return true;
-}
-
 static bool addSymbolTest(const char *string, const uint16_t start,
 		const uint16_t end, std::vector<std::string> cmp)
 {
@@ -65,7 +31,7 @@ static bool addSymbolTest(const char *string, const uint16_t start,
 		t_token_list *result = create_token_list();
 		add_symbols(result, string, start, end);
 		if (result != cmp) {
-			print_list(result);
+			print_list(result, cmp);
 			exit(1);
 		}
 		exit(0);
@@ -82,7 +48,7 @@ static bool addWordTest(const char *string, const uint16_t start,
 		t_token_list *result = create_token_list();
 		add_words(result, string, start, end);
 		if (result != cmp) {
-			print_list(result);
+			print_list(result, cmp);
 			exit(1);
 		}
 		exit(0);

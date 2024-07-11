@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/10 18:10:14 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 17:00:22 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,50 @@
 
 #include <iostream>
 #include <vector>
+
+extern "C" {
+	#include "tokenizer.h"
+}
+
+void print_list(t_token_list *list, std::vector<std::string> cmp)
+{
+	std::cout << "Comparing:\n{ ";
+	for (uint16_t i = 0; i < list->size; ++i)
+	{
+		std::cout << "\'" << list->array[i].content << "\' ";
+	}
+	std::cout << "}\n{ ";
+	for (std::size_t i = 0; i < cmp.size(); ++i)
+	{
+		std::cout << "\'" << cmp[i] << "\' ";
+	}
+	std::cout << "}" << std::endl;
+}
+
+bool operator==(const t_token_list *a, const std::vector<std::string>& b)
+{
+	if (a == NULL)
+	{
+		if (b.size() != 0)
+			return false;
+		return true;
+	}
+	if (a->size != b.size())
+		return false;
+	for (std::size_t i = 0; i < b.size(); ++i)
+	{
+		if (get_token(a, i) != b.at(i))
+			return false;
+	}
+	return true;
+}
+
+bool operator!=(const t_token_list *a, const std::vector<std::string>& b)
+{
+	if (a == b)
+		return false;
+	return true;
+}
 
 std::string sanitizeString(const char *dest)
 {

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:07:24 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/11 16:41:06 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 17:01:33 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,41 +22,6 @@ extern "C" {
 	#include "tokenizer.h"
 }
 
-static void print_list(t_token_list *list)
-{
-	std::cout << "{";
-	for (uint16_t i = 0; i < list->size; ++i)
-	{
-		std::cout << "\'" << list->array[i].content << "\' ";
-	}
-	std::cout << "}" << std::endl;
-}
-
-static bool operator==(const t_token_list *a, const std::vector<std::string>& b)
-{
-	if (a == NULL)
-	{
-		if (b.size() != 0)
-			return false;
-		return true;
-	}
-	if (a->size != b.size())
-		return false;
-	for (std::size_t i = 0; i < b.size(); ++i)
-	{
-		if (get_token(a, i) != b.at(i))
-			return false;
-	}
-	return true;
-}
-
-static bool operator!=(const t_token_list *a, const std::vector<std::string>& b)
-{
-	if (a == b)
-		return false;
-	return true;
-}
-
 static bool runParse(const char *string, std::vector<std::string> cmp)
 {
 	pid_t pid = fork();
@@ -65,7 +30,7 @@ static bool runParse(const char *string, std::vector<std::string> cmp)
 		t_token_list *list = create_token_list();
 		parse(list, string);
 		if (list != cmp) {
-			print_list(list);
+			print_list(list, cmp);
 			exit(1);
 		}
 		delete_token_list(&list);
@@ -94,6 +59,10 @@ std::pair<int, int> parseTest()
 	runParse("\"This 'needs' to be one string\"", {"This 'needs' to be one string"}) == false ? testsFailed++ : testsPassed++;
 	runParse("\'This \"needs\" to be one string\'", {"This \"needs\" to be one string"}) == false ? testsFailed++ : testsPassed++;
 	runParse("stuff<a.out\'This \"needs\" to be one string\'yess", {"stuff", "<", "a.out", "This \"needs\" to be one string", "yess"}) == false ? testsFailed++ : testsPassed++;
+	runParse("stuff<a.out \'This \"needs\" to be one string\' yess", {"stuff", "<", "a.out", "This \"needs\" to be one string", "yess"}) == false ? testsFailed++ : testsPassed++;
+	runParse("brackets! (abc) bye", {"brackets!", "(", "abc", ")", "bye"}) == false ? testsFailed++ : testsPassed++;
+	runParse("no combining () ?", {"no", "combining", "(", ")", "?"}) == false ? testsFailed++ : testsPassed++;
+	runParse("no combining++ ((hi)bye) ?", {"no", "combining++", "(", "(", "hi", ")", "bye", ")", "?"}) == false ? testsFailed++ : testsPassed++;
 
 	return {testsPassed, testsFailed};
 }
