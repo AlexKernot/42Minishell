@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:07:24 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/10 16:26:09 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 15:45:18 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ static void print_list(t_token_list *list)
 
 static bool operator==(const t_token_list *a, const std::vector<std::string>& b)
 {
+	if (a == NULL)
+	{
+		if (b.size() != 0)
+			return false;
+		return true;
+	}
 	if (a->size != b.size())
 		return false;
 	for (std::size_t i = 0; i < b.size(); ++i)
@@ -83,6 +89,10 @@ std::pair<int, int> parseTest()
 	runParse("Hello There", {"Hello", "There"}) == false ? testsFailed++ : testsPassed++;
 	runParse("Hello <test.txt", {"Hello", "<", "test.txt"}) == false ? testsFailed++ : testsPassed++;
 	runParse("Hello||Test<a>b<<c", {"Hello", "||", "Test", "<", "a", ">", "b", "<<", "c"}) == false ? testsFailed++ : testsPassed++;
+	runParse("\"This needs to be one string\"", {"This needs to be one string"}) == false ? testsFailed++ : testsPassed++;
+	runParse("\'This needs to be one string\'", {"This needs to be one string"}) == false ? testsFailed++ : testsPassed++;
+	runParse("\"This 'needs' to be one string\"", {"This'needs' to be one string"}) == false ? testsFailed++ : testsPassed++;
+	runParse("\'This \"needs\" to be one string\'", {"This \"needs\" to be one string"}) == false ? testsFailed++ : testsPassed++;
 
 	return {testsPassed, testsFailed};
 }

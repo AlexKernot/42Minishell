@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 22:55:22 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/06 15:34:30 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/11 16:24:12 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,9 @@
 #include <unistd.h>
 #include <iostream>
 
-typedef enum e_char_classification
-{
-	none_c,
-	letter_c,
-	symbol_c
-} t_char_class;
-
-typedef enum e_symbols
-{
-	none_s,
-	in_s,
-	out_s,
-	pipe_s,
-	and_s,
-	quote_s
-}	t_symbols;
+extern "C" {
+	#include "tokenizer.h"
+}
 
 bool printResult(pid_t pid)
 {
@@ -49,10 +36,6 @@ bool printResult(pid_t pid)
 	std::cout << "something else happened..." << std::endl;
 	return false;
 }
-
-extern "C" t_symbols get_symbols(const char a);
-
-extern "C" t_char_class	get_char_type(const char a);
 
 bool runCharTypes(char a, t_char_class cmp)
 {
@@ -92,12 +75,12 @@ std::pair<int, int> charType()
 	std::cout << "char_class tests:" << std::endl;
 	for (int i = -128; i < 128; ++i) {
 		char a = (char)i;
-		if (isalnum(a) == true || a == ' ')
-			runCharTypes(a, letter_c) == false ? testsFailed++ : testsPassed++;
-		else if (a == '<' || a == '>' || a == '|' || a == '&' || a == '\'' || a == '\"')
+		if (isprint(a) == false || isascii(a) == false || a == ' ' || a == '\'' || a == '\"')
+			runCharTypes(a, none_c) == false ? testsFailed++ : testsPassed;
+		else if (a == '<' || a == '>' || a == '|' || a == '&' || a == '(' || a == ')')
 			runCharTypes(a, symbol_c) == false ? testsFailed++ : testsPassed++;
 		else
-			runCharTypes(a, none_c) == false ? testsFailed++ : testsPassed++;
+			runCharTypes(a, letter_c) == false ? testsFailed++ : testsPassed++;
 	}
 
 	return {testsPassed, testsFailed};
@@ -119,8 +102,8 @@ std::pair<int, int> symbolType()
 			runSymbolTypes((char)i, out_s) == false ? testsFailed++ : testsPassed++;
 		else if (a == '&')
 			runSymbolTypes((char)i, and_s) == false ? testsFailed++ : testsPassed++;
-		else if (a == '\"' || a == '\'')
-			runSymbolTypes((char)i, quote_s) == false ? testsFailed++ : testsPassed++;
+		else if (a == '(' || a == ')')
+			runSymbolTypes((char)i, bracket_s) == false ? testsFailed++ : testsPassed++;
 		else
 			runSymbolTypes((char)i, none_s) == false ? testsFailed++ : testsPassed++;
 	}

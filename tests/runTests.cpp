@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/09 19:11:26 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/10 18:10:14 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,19 @@ int main(int ac, char *av[])
 	}
 	malloc_init();
 	std::vector<std::pair<int, int>> results;
+	std::cout << "Malloc and free:\n";
 	results.push_back(fakeMallocFreeTest());
+	std::cout << "\nCopy string:\n";
 	results.push_back(copyStringTest(debug));
+	std::cout << "\nExtract string:\n";
 	results.push_back(extractStringTest(debug));
+	std::cout << "\nTypes:\n";
 	results.push_back(runTypeTests());
+	std::cout << "\nToken list:\n";
 	results.push_back(tokenListTests());
+	std::cout << "\nSymbol and Word:\n";
 	results.push_back(addSymbolAndWordTest());
+	std::cout << "\nParse:\n";
 	results.push_back(parseTest());
 	
 	std::cout << "\n\nmalloc and free tests: " << results[0].first << " passed " << results[0].second << " failed.\n";

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 17:46:25 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/10 15:56:06 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/10 18:20:23 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ static void print_list(t_token_list *list)
 
 static bool operator==(const t_token_list *a, const std::vector<std::string>& b)
 {
+	if (a == NULL) {
+		if (b.empty() == true)
+			return true;
+		return false;
+	}
 	if (a->size != b.size())
 		return false;
 	for (std::size_t i = 0; i < b.size(); ++i)
@@ -97,6 +102,7 @@ std::pair<int, int> addSymbolAndWordTest()
 	malloc_revert();
 	addWordTest("Hello", 0, 6, {"Hello"}) == false ? testsFailed++ : testsPassed++;
 	addWordTest("$%&^Hello there how are you today!@#(", 4, 33, {"Hello", "there", "how", "are", "you", "today"}) == false ? testsFailed++ : testsPassed++;
+	addWordTest("No Trailing Space ", 0, 19, {"No", "Trailing", "Space"}) == false ? testsFailed++ : testsPassed++;
 
 	addSymbolTest("", 0, 0, {}) == false ? testsFailed++ : testsPassed++;
 	addSymbolTest(NULL, 0, 1, {}) == false ? testsFailed++ : testsPassed++;;
@@ -104,7 +110,7 @@ std::pair<int, int> addSymbolAndWordTest()
 	addSymbolTest("<>||&|", 0, 8, {}) == false ? testsFailed++ : testsPassed++;
 	malloc_revert();
 	addSymbolTest("<>||&|", 0, 8, {"<", ">", "||", "&", "|"}) == false ? testsFailed++ : testsPassed++;
-	addSymbolTest("aa<>||&|av", 2, 10, {"<", ">", "||", "&", "|"}) == false ? testsFailed++ : testsPassed++;
+	addSymbolTest("aa<>||&|av", 2, 8, {"<", ">", "||", "&", "|"}) == false ? testsFailed++ : testsPassed++;
 	addSymbolTest("<<<<<", 0, 6, {"<<<<<"}) == false ? testsFailed++ : testsPassed++;
 
 	return {testsPassed, testsFailed};
