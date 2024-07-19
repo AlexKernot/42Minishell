@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 21:24:21 by akernot           #+#    #+#             */
-/*   Updated: 2023/12/03 22:06:21 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/19 16:30:58 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,37 +101,6 @@ void		*vector_end(t_vector *vector);
 
 /* Returns a pointer to the value at the front of the vector. */
 void		*vector_front(t_vector *vector);
-
-/* Queue */
-
-/* A LIFO (Last In First Out) datastructure that holds void pointers in an    */
-/* internal vector. Calling queue_push will append data to the end of the     */
-/* queue and queue_pop will remove data from the front of the queue and       */
-/* returns it. Only the front of the queue should be accessed however the     */
-/* underlying vector can be directly accessed if required.                    */
-typedef struct queue
-{
-	t_vector	*data;
-	int			head;
-}	t_queue;
-
-/* Allocates memory for a new queue on the heap with */
-/* with an initial capacity of 'queue_size' */
-t_queue		*queue_ctor(int queue_size);
-
-/* Frees the queue and vector inside the queue, setting the pointers to NULL. */
-void		queue_dtor(t_queue **this_queue);
-
-/* Pushes the pointer 'data' onto the end of the queue. */
-/* This is typically known as an enqueue operation. */
-void		queue_push(t_queue *this_queue, void *data);
-
-/* Removes the data at the front of the queue and returns it. */
-/* This is commonly known as a dequeue operation. */
-void		*queue_pop(t_queue *this_queue);
-
-/* Returns the data at the front of the queue. */
-void		*queue_front(t_queue *this_queue);
 
 /* Stack */
 /* A last in first out data structure that creates a vector of            */

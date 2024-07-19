@@ -24,7 +24,7 @@ FILES=	ft_atoi.c ft_itoa.c ft_ltoa.c get_next_line.c get_next_line_utils.c \
 BINARIES=$(FILES:%.c=$(OUTPUTFOLDER)%.o)
 
 VPATH=%.c convert/ gnl/ list/ memory/ print/ print/printf/ \
- queue/ stack/ string/ vector/
+stack/ string/ vector/
 
 $(OUTPUTFOLDER)%.o : %.c
 	@mkdir -p $(OUTPUTFOLDER)
