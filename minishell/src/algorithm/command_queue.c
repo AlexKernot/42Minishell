@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:57:32 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/19 16:32:44 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/20 22:06:08 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,17 +66,22 @@ static void	destroy_command(t_command *command)
 	t_redirect	*redirects;
 	uint16_t	i;
 
+	if (command == NULL)
+		return ;
 	redirects = command->redirects;
 	delete_token_list(&command->args);
 	i = 0;
-	while (i < command->size)
+	while (i < command->size && redirects != NULL)
 	{
-		free(redirects[i].file_name);
+		if (redirects[i].file_name != NULL)
+			free(redirects[i].file_name);
 		++i;
 	}
-	free(redirects);
+	if (redirects != NULL)
+		free(redirects);
 	command->redirects = NULL;
-	free(command->command);
+	if (command->command != NULL)
+		free(command->command);
 	command->command = NULL;
 	command->size = 0;
 	command->capacity = 0;
@@ -84,12 +89,14 @@ static void	destroy_command(t_command *command)
 
 static void	destroy_command_item(t_inner_queue_item *item, t_op_or_cmd type)
 {
-	if (type == op)
+	if (item == NULL)
+		return ;
+	if (type == op && item->operator_word != NULL)
 	{
 		free(item->operator_word);
 		item->operator_word = NULL;
 	}
-	else
+	else if (type == command && item->command != NULL)
 	{
 		destroy_command(item->command);
 		free(item->command);
@@ -103,10 +110,13 @@ void	destroy_command_queue(t_command_queue **queue)
 	t_queue_item	*item;
 
 	i = 0;
+	if (queue == NULL || *queue == NULL)
+		return ;
 	while (i < (*queue)->size)
 	{
 		item = &(*queue)->array[i];
 		destroy_command_item(&item->contents, item->type);
+		++i;
 	}
 	free(*queue);
 	*queue = NULL;
@@ -172,9 +182,9 @@ void	command_enqueue_cmd(t_command_queue *queue, t_command *cmd)
 
 void	command_dequeue(t_command_queue *queue)
 {
-	if (queue == NULL)
+	if (queue == NULL || queue->array == NULL)
 		return ;
-	if (queue->front >= queue->size)
+	if (queue->front >= queue->size || queue->size == 0)
 		return ;
 	queue->front++;
 }
