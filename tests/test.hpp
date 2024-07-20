@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/11 17:00:47 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/14 16:51:29 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,6 @@ std::pair<int, int> runTypeTests();
 std::pair<int, int> tokenListTests();
 std::pair<int, int> addSymbolAndWordTest();
 std::pair<int, int> parseTest();
+std::pair<int, int> commandQueueTest();
 
 #endif // TEST_HPP

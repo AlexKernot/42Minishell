@@ -6,7 +6,7 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/07/14 16:06:11 by akernot          ###   ########.fr        #
+#    Updated: 2024/07/20 19:34:53 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,9 @@ OUTPUTDIR = ./bin
 TESTS = runTests.cpp copyStringTest.cpp extractStringTests.cpp getTypeTests.cpp \
 fakeMalloc.cpp fakeMemoryTest.cpp tokenListTests.cpp addSymbolAndWordTest.cpp \
 parseTests.cpp commandQueueTests.cpp
+
 VPATH = ./tests/
+
 OBJ = $(TESTS:%.cpp=$(OUTPUTDIR)/%.o)
 
 $(OUTPUTDIR)/%.o: %.cpp

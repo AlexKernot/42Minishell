@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/11 17:00:22 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/14 16:52:39 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ int main(int ac, char *av[])
 	results.push_back(addSymbolAndWordTest());
 	std::cout << "\nParse:\n";
 	results.push_back(parseTest());
+	std::cout << "\nCommand Queue:\n";
+	results.push_back(commandQueueTest());
 	
 	std::cout << "\n\nmalloc and free tests: " << results[0].first << " passed " << results[0].second << " failed.\n";
 	std::cout << "copy_string: " << results[1].first << " passed " << results[1].second << " failed.\n";
@@ -129,6 +131,7 @@ int main(int ac, char *av[])
 	std::cout << "token_list tests " << results[4].first << " passed " << results[4].second << " failed.\n";
 	std::cout << "add symbols and words " << results[5].first << " passed " << results[5].second << " failed.\n";
 	std::cout << "parse tests " << results[6].first << " passed " << results[6].second << " failed.\n";
+	std::cout << "command queue tests " << results[7].first << " passed " << results[7].second << " failed\n";
 	std::cout << "\n";
 	return 0;
 }
