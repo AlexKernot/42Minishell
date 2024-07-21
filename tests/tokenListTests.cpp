@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 14:09:48 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/09 17:09:27 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 00:34:28 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ bool resizeTest()
 	pid_t pid = fork();
 	if (pid == 0)
 	{
-		const char *word1 = "Word1";
-		const char *word2 = "Word2";
-		const char *word3 = "Word3";
+		char *word1 = createStr("Word1");
+		char *word2 = createStr("Word2");
+		char *word3 = createStr("Word3");
 		
 		t_token_list *list = create_token_list();
 		push_token(list, word1);
@@ -85,8 +85,8 @@ bool pushTokenTest()
 	pid_t pid = fork();
 	if (pid == 0)
 	{
-		const char *word1 = "Hello";
-		const char *word2 = "Again";
+		char *word1 = createStr("Hello");
+		char *word2 = createStr("Again");
 		t_token_list *list = create_token_list();
 		push_token(list, word1);
 		push_token(list, word2);
@@ -112,9 +112,9 @@ bool getTokenTest()
 	pid_t pid = fork();
 	if (pid == 0)
 	{
-		const char *word1 = "Word1";
-		const char *word2 = "Word2";
-		const char *word3 = "Word3";
+		char *word1 = createStr("Word1");
+		char *word2 = createStr("Word2");
+		char *word3 = createStr("Word3");
 		t_token_list *list = create_token_list();
 		push_token(list, word1);
 		push_token(list, word2);
@@ -157,9 +157,9 @@ bool tokenListSizeTest()
 	pid_t pid = fork();
 	if (pid == 0)
 	{
-		const char *word1 = "one";
-		const char *word2 = "two";
-		const char *word3 = "three";
+		char *word1 = createStr("one");
+		char *word2 = createStr("two");
+		char *word3 = createStr("three");
 
 		t_token_list *list = create_token_list();
 

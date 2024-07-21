@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 16:03:54 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/20 21:23:14 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 13:11:40 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,6 @@
 
 extern "C" {
 	#include "command_queue.h"
-}
-
-static char *createStr(const char *text)
-{
-	char *retVal = (char *)malloc(strlen(text) + 1);
-	strcpy(retVal, text);
-	retVal[strlen(text)] = '\0';
-	return retVal;
 }
 
 static bool createCommandQueue()
@@ -70,8 +62,7 @@ static bool destroyCommandQueue()
 	cmd = (t_command *)malloc(sizeof(*cmd));
 	cmd->command = (char *)malloc(sizeof(char) * 4);
 	cmd->args = create_token_list();
-	cmd->redirects = (t_redirect *)malloc(sizeof(t_redirect));
-	cmd->redirects[0].file_name = (char *)malloc(sizeof(char) * 4);
+	cmd->redirects = create_token_list();
 	cmd->size = 1;
 	cmd->capacity = 1;
 	destroy_command_queue(&queue);

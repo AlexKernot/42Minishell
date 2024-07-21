@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 17:50:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/09 17:56:33 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 15:58:39 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void		resize(t_token_list *token_list, uint16_t size)
 	token_list->array = new_array;
 }
 
-void	push_token(t_token_list *token_list, const char *string)
+void	push_token(t_token_list *token_list, char *string)
 {
 	t_token		*array;
 	uint16_t	size;
@@ -71,10 +71,18 @@ void	push_token(t_token_list *token_list, const char *string)
 
 void		delete_token_list(t_token_list **token_list)
 {
+	uint16_t	i;
+
 	if (token_list == NULL || (*token_list) == NULL)
 		return;
 	if ((*token_list)->array != NULL)
 	{
+		i = 0;
+		while (i < (*token_list)->size)
+		{
+			free((*token_list)->array[i].content);
+			++i;
+		}
 		free((*token_list)->array);
 		(*token_list)->array = NULL;
 	}
@@ -89,7 +97,7 @@ uint16_t	token_list_size(const t_token_list *token_list)
 	return (token_list->size);
 }
 
-const char	*get_token(const t_token_list *token_list, uint16_t index)
+char	*get_token(const t_token_list *token_list, uint16_t index)
 {
 	if (token_list == NULL || token_list->array == NULL)
 		return (NULL);

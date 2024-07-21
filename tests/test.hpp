@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/14 16:51:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 00:32:42 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ bool operator==(const t_token_list *a, const std::vector<std::string>& b);
 bool operator!=(const t_token_list *a, const std::vector<std::string>& b);
 extern "C" void malloc_return_null();
 extern "C" void malloc_revert();
+char *createStr(const char *text);
 
 // Test functions
 std::pair<int, int> fakeMallocFreeTest();

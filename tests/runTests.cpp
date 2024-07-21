@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/14 16:52:39 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 00:32:36 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,14 @@
 
 extern "C" {
 	#include "tokenizer.h"
+}
+
+char *createStr(const char *text)
+{
+	char *retVal = (char *)malloc(strlen(text) + 1);
+	strcpy(retVal, text);
+	retVal[strlen(text)] = '\0';
+	return retVal;
 }
 
 void print_list(t_token_list *list, std::vector<std::string> cmp)
