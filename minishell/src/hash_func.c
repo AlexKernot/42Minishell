@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   hash_func.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 00:42:35 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:46:46 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 16:57:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <stddef.h>
 
 #include "minishell.h"
 

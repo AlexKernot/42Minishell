@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   search_env_vars.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:44:07 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:44:47 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 16:57:55 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft.h"
 #include "environment_variables.h"
 
 /**

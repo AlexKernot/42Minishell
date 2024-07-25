@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   segment.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:53:26 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/25 19:06:02 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 16:58:08 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define SEGMENT_H
 
 # include "libft.h"
+# include "stack.h"
 
 typedef struct s_segment
 {

@@ -6,7 +6,7 @@ CFLAGS=-Wall -Wextra -Wpedantic -Wno-newline-eof -Werror -I./ -I./print/printf/i
 OUTPUTFOLDER=binaries/
 
 FILES=	ft_atoi.c ft_itoa.c ft_ltoa.c get_next_line.c get_next_line_utils.c \
-		ft_queue.c ft_vector_utils.c ft_vector.c ft_lstadd_back_bonus.c \
+		ft_vector_utils.c ft_vector.c ft_lstadd_back_bonus.c \
 		ft_lstadd_front_bonus.c ft_lstclear_bonus.c ft_lstdelone_bonus.c \
 		ft_lstiter_bonus.c ft_lstmap_bonus.c ft_lstnew_bonus.c \
 		ft_lstsize_bonus.c ft_bzero.c ft_calloc.c ft_memchr.c ft_memcmp.c \
