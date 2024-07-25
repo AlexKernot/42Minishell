@@ -52,3 +52,6 @@ Mkfile.old
 dkms.conf
 
 bin/
+.vscode/c_cpp_properties.json
+*.json
+minishell/minishell
