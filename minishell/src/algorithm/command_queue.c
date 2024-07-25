@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:57:32 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/20 22:06:08 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 15:43:15 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,17 @@ t_command	*create_command(char *command)
 	if (cmd == NULL)
 		return (NULL);
 	cmd->args = create_token_list();
-	if (cmd->args == NULL)
+	cmd->redirects = create_token_list();
+	cmd->redir_types = create_token_list();
+	if (cmd->args == NULL || cmd->redirects == NULL
+		|| cmd->redir_types == NULL)
 	{
-		free(cmd);
-		return (NULL);
-	}
-	cmd->redirects = (t_redirect *)malloc(sizeof(*cmd->redirects) * 10);
-	if (cmd->redirects == NULL)
-	{
-		delete_token_list(&cmd->args);
+		if (cmd->args != NULL)
+			delete_token_list(&cmd->args);
+		if (cmd->redirects != NULL)
+			delete_token_list(&cmd->redirects);
+		if (cmd->redir_types != NULL)
+			delete_token_list(&cmd->redir_types);
 		free(cmd);
 		return (NULL);
 	}
@@ -63,23 +65,11 @@ t_command	*create_command(char *command)
 
 static void	destroy_command(t_command *command)
 {
-	t_redirect	*redirects;
-	uint16_t	i;
-
 	if (command == NULL)
 		return ;
-	redirects = command->redirects;
 	delete_token_list(&command->args);
-	i = 0;
-	while (i < command->size && redirects != NULL)
-	{
-		if (redirects[i].file_name != NULL)
-			free(redirects[i].file_name);
-		++i;
-	}
-	if (redirects != NULL)
-		free(redirects);
-	command->redirects = NULL;
+	delete_token_list(&command->redirects);
+	delete_token_list(&command->redir_types);
 	if (command->command != NULL)
 		free(command->command);
 	command->command = NULL;

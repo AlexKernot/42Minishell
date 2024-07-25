@@ -1,7 +1,7 @@
 NAME=minishell
 
 CC = clang
-CFLAGS = -MD -Wall -Wextra -Wpedantic -Wno-newline-eof -std=c11 -I./libft/ -I./includes/
+CFLAGS = -MD -Wall -Wextra -Wpedantic -g -std=c11 -I./libft/ -I./includes/
 LDFLAGS = -lreadline # -fsanitize=address -fsanitize=undefined
 
 FILES = run.c execute.c vector_subset.c process.c hash_func.c \
@@ -10,11 +10,11 @@ FILES = run.c execute.c vector_subset.c process.c hash_func.c \
 		redirect.c segment.c cleanup.c preprocess.c ft_pipe.c \
 		builtin_echo.c builtin_env.c builtin_exit.c builtin_export.c \
 		builtin_pwd.c builtin_unset.c builtin_cd.c \
-		tokenizer.c token_list.c
+		tokenizer.c token_list.c command_queue.c shunting_yard.c
 
 OUTPUTDIR = ./bin
 
-VPATH = ./src/ ./src/builtins ./src/tokenizer
+VPATH = ./src/ ./src/builtins ./src/tokenizer ./src/algorithm
 
 LIBFT = $(OUTPUTDIR)/libft.a
 

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:57:50 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/19 16:32:44 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/21 13:05:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ typedef struct s_command
 {
 	char		*command;
 	t_token_list	*args;
-	t_redirect	*redirects;
+	t_token_list	*redirects;
+	t_token_list	*redir_types;
 	uint16_t	size;
 	uint16_t	capacity;
 }	t_command;

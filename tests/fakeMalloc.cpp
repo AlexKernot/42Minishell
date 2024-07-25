@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:29:19 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/09 16:59:58 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/25 17:18:44 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,36 @@ void print_malloc()
 	std::cout << std::endl;
 }
 
+static char sanitize_char(int a)
+{
+	if (a < 32 || a > 126)
+		return '.';
+	return (char)a;
+}
+
 void check_mem()
 {
+	bool leaksDetected = false;
+
 	for (std::size_t i = 0; i < sizeof(fake_heap); ++i)
 	{
 		if (alloc_addr[i] != -1) {
-			std::cerr << "Memory leak\n";
-			print_malloc();
-			abort();
+			if (leaksDetected == false) {
+				std::cerr << "Memory leaks detected\n";
+				leaksDetected = true;
+			}
+			int size = 1;
+			for (std::size_t j = i; alloc_addr[j] == alloc_addr[i]; ++j)
+				++size;
+			std::cerr << "leak at " << i << " of size " << size << ":\n";
+			for (std::size_t j = i; alloc_addr[j] == alloc_addr[i]; ++j)
+				std::cerr << sanitize_char(fake_heap[j]);
+			std::cerr << "\n";
+			i += size - 1;
 		}
 	}
+	if (leaksDetected == true)
+		abort();
 }
 
 extern "C" {
