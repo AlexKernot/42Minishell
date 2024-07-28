@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "libft.h"
+#include "stack.h"
 #include <stdlib.h>
 
 t_stack	*stack_ctor(int stack_size)

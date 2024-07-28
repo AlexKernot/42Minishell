@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_vector.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/16 18:24:45 by akernot           #+#    #+#             */
-/*   Updated: 2024/02/01 18:56:07 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/27 16:52:41 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "vector.h"
 
 #include <stdlib.h>
 #include <unistd.h>
