@@ -6,7 +6,7 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/07/21 16:55:00 by akernot          ###   ########.fr        #
+#    Updated: 2024/07/28 17:58:54 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ OUTPUTDIR = ./bin
 
 TESTS = runTests.cpp copyStringTest.cpp extractStringTests.cpp getTypeTests.cpp \
 fakeMalloc.cpp fakeMemoryTest.cpp tokenListTests.cpp addSymbolAndWordTest.cpp \
-parseTests.cpp commandQueueTests.cpp shuntingYardTests.cpp
+parseTests.cpp syntaxTreeTests.cpp shuntingYardTests.cpp
 
 VPATH = ./tests/
 

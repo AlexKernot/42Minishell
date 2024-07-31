@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:21:18 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/28 01:28:33 by akernot          ###   ########.fr       */
+/*   Updated: 2024/07/28 18:08:48 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@ int		get_precedence(const char *token);
 int		is_brackets(const char *token);
 void		add_brackets(t_syntax_tree *tree, t_stack *c_stack,
 			t_stack *o_stack, char *token);
-void		add_redirect(t_command *command, char *redir, char *file);
-void		purge_stack(t_syntax_tree *tree, t_stack *c_stack,
+void		purge_stack(t_syntax_tree **tree, t_stack *c_stack,
 			t_stack *o_stack);
 
 #endif
