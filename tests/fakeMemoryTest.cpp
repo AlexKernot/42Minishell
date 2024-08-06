@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 18:30:16 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/08 13:03:35 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/05 18:22:22 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool alloc(size_t size, bool expectFail)
 			mem[i] = 'a';
 		}
 		free(mem);
-		check_mem();
+		check_mem(logFD);
 		exit(0);
 	}
 	int result = 0;
