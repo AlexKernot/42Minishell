@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 15:18:27 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/05 18:22:22 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/06 13:01:52 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void syntaxTreeCreateAndDestroy::test(int logFD) const
 	t_command *result = create_command(NULL);
 	malloc_revert();
 	fassert(logFD, result == NULL);
+	check_mem(logFD);
 	
 	result = create_command(NULL);
 	fassert(logFD, result != NULL);
@@ -40,6 +41,7 @@ void syntaxTreeCreateAndDestroy::test(int logFD) const
 	fassert(logFD, result->redirects->size == 0);
 	fassert(logFD, result->redir_types->size == 0);
 	delete_command(result);
+	free(result);
 	check_mem(logFD);
 
 	result = create_command(createStr("Test"));
@@ -137,6 +139,7 @@ void syntaxTreeAddArg::test(int logFD) const
 	fassert(logFD, std::string(result->command) == "1");
 	fassert(logFD, std::string(result->args->array[0].content) == "1");
 	delete_command(result);
+	free(result);
 	check_mem(logFD);
 }
 
@@ -145,6 +148,7 @@ void syntaxTreeDelete::test(int logFD) const
 	delete_syntax_tree(NULL);
 	t_syntax_tree *null = NULL;
 	delete_syntax_tree(&null);
+	check_mem(logFD);
 
 	t_syntax_tree *tree = (t_syntax_tree *)malloc(sizeof(*tree));
 	tree->left = NULL;

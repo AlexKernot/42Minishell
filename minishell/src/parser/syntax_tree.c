@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 17:24:08 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/06 12:59:06 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/06 13:03:31 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void		delete_syntax_tree(t_syntax_tree **tree)
 	delete_command_item(&t->contents.contents, t->contents.type);
 	delete_syntax_tree(&t->left);
 	delete_syntax_tree(&t->right);
+	free(*tree);
 	*tree = NULL;
 }
 
