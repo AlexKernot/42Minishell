@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_transmit.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:29:16 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:46:27 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/04 20:56:49 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
  * @param write_fd the file descriptor for the write end of a pipe.
  * @param message the message to write to the pipe.
 */
-void	transmit(int write_fd, char *message)
+void	transmit(int write_fd, const char *message)
 {
 	char	*num_to_str;
 	int		num_bytes;
@@ -69,7 +69,10 @@ char	*receive(int read_fd)
 		num_bytes *= 10;
 		num_bytes += first_char - '0';
 		if (read(read_fd, &first_char, 1) != 1)
+		{
+			perror("receive");
 			return (NULL);
+		}
 	}
 	string = ft_calloc(sizeof(*string), num_bytes);
 	string[0] = first_char;

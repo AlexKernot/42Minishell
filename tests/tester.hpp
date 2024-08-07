@@ -1,27 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirect.h                                         :+:      :+:    :+:   */
+/*   tester.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/25 18:58:07 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/03 15:17:01 by akernot          ###   ########.fr       */
+/*   Created: 2024/08/01 17:30:02 by akernot           #+#    #+#             */
+/*   Updated: 2024/08/04 19:12:43 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REDIRECT_H
-# define REDIRECT_H
+#ifndef TESTER_HPP
+# define TESTER_HPP
 
-# include "segment.h"
-# include "ft_pipe.h"
+# include <vector>
 
-typedef struct s_redirect
+# include "fileTests.hpp"
+
+class Tester
 {
-	char			*file_name;
-	t_segment_type	type;
-}	t_redirect;
+public:
+	Tester(std::vector<fileTests *>&& tests);
+	void test();
+private:
+	std::vector<fileTests *> testList;
+};
 
-int		redirect(t_segment	*segment);
-
-#endif
+#endif // TESTER_HPP

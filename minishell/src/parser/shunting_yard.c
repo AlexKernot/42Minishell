@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:25:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/28 01:42:05 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/06 16:51:11 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <unistd.h>
 
 #include "tokenizer.h"
+#include "stack.h"
 #include "syntax_tree.h"
 #include "libft.h"
 
@@ -113,30 +114,6 @@ void	add_operator(t_syntax_tree *tree, t_stack *c_stack,
 	}
 }
 
-void	add_redirect(t_command *command, char *redir, char *file)
-{
-	char	*redir_type;
-
-	if (redir == NULL || command == NULL || file == NULL)
-		return ;
-	redir_type = (char *)malloc(2);
-	if (redir_type == NULL)
-		return ;
-	redir_type[1] = '\0';
-	if (redir[0] == '<' && redir[1] == '\0')
-		redir_type[0] = '1';
-	else if (redir[0] == '<' && redir[1] == '<' && redir[2] == '\0')
-		redir_type[0] = '3';
-	else if (redir[0] == '>' && redir[1] == '\0')
-		redir_type[0] = '2';
-	else if (redir[0] == '>' && redir[1] == '>' && redir[2] == '\0')
-		redir_type[0] = '4';
-	else
-		redir_type[0] = '5';
-	push_token(command->redir_types, redir_type);
-	push_token(command->redirects, file);
-}
-
 void	add_token(t_syntax_tree *tree, t_stack *c_stack, t_stack *o_stack,
 		char *token)
 {
@@ -147,7 +124,7 @@ void	add_token(t_syntax_tree *tree, t_stack *c_stack, t_stack *o_stack,
 	else if (is_operator(token))
 	{
 		if (tree == NULL)
-			add_cmd_to_syntax_tree(&tree, 
+			create_syntax_tree(&tree, token,
 				stack_pop(c_stack), stack_pop(c_stack));
 		else
 			add_op_to_syntax_tree(&tree, token, stack_pop(c_stack));
@@ -179,15 +156,20 @@ int	is_redirect(const char *token)
 	return (0);
 }
 
-void	purge_stack(t_syntax_tree *tree, t_stack *c_stack,
+void	purge_stack(t_syntax_tree **tree, t_stack *c_stack,
 			t_stack *o_stack)
 {
 	if (tree == NULL || c_stack == NULL || o_stack == NULL)
 		return ;
-	while (stack_front(o_stack) != NULL)
+	if (*tree == NULL && o_stack->data->size >= 1 && c_stack->data->size >= 2)
+		create_syntax_tree(tree, (char *)stack_pop(o_stack),
+			(t_command *)stack_pop(c_stack),
+			(t_command *)stack_pop(c_stack));
+	while (stack_front(o_stack) != NULL && stack_front(c_stack) != NULL)
 	{
-		add_op_to_syntax_tree(&tree,
-			stack_pop(o_stack), stack_pop(c_stack));
+		add_op_to_syntax_tree(tree,
+			(char *)stack_pop(o_stack),
+			(t_command *)stack_pop(c_stack));
 	}
 }
 
@@ -229,7 +211,7 @@ t_syntax_tree	*convert_postfix(t_token_list *tokens)
 			add_token(syntax_tree, c_stack, o_stack, token);
 		++i;
 	}
-	purge_stack(syntax_tree, c_stack, o_stack);
+	purge_stack(&syntax_tree, c_stack, o_stack);
 	stack_dtor(&c_stack);
 	stack_dtor(&o_stack);
 	return (syntax_tree);

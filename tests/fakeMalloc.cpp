@@ -6,14 +6,20 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:29:19 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/25 17:18:44 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/05 18:34:29 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sstream>
+#include <source_location>
+
 #include <stdlib.h>
 #include <unistd.h>
-#include <iostream>
+#include <stdio.h>
 
+extern "C" {
+	#include "ft_transmit.h"
+}
 
 // A really bad malloc override for testing my program
 char fake_heap[2048];
@@ -29,20 +35,6 @@ void malloc_init()
 	}
 }
 
-void print_malloc()
-{
-	for (size_t i = 0; i < sizeof(fake_heap); ++i)
-	{
-		std::cout << (int)fake_heap[i] << ' ';
-	}
-	std::cout << "\n" << std::endl;
-	for (size_t i = 0; i < sizeof(fake_heap); ++i)
-	{
-		std::cout << (int)alloc_addr[i] << ' ';
-	}
-	std::cout << std::endl;
-}
-
 static char sanitize_char(int a)
 {
 	if (a < 32 || a > 126)
@@ -50,29 +42,34 @@ static char sanitize_char(int a)
 	return (char)a;
 }
 
-void check_mem()
+void check_memory(const std::source_location& loc, int logFD)
 {
 	bool leaksDetected = false;
+	std::stringstream str;
 
 	for (std::size_t i = 0; i < sizeof(fake_heap); ++i)
 	{
-		if (alloc_addr[i] != -1) {
-			if (leaksDetected == false) {
-				std::cerr << "Memory leaks detected\n";
-				leaksDetected = true;
-			}
-			int size = 1;
-			for (std::size_t j = i; alloc_addr[j] == alloc_addr[i]; ++j)
-				++size;
-			std::cerr << "leak at " << i << " of size " << size << ":\n";
-			for (std::size_t j = i; alloc_addr[j] == alloc_addr[i]; ++j)
-				std::cerr << sanitize_char(fake_heap[j]);
-			std::cerr << "\n";
-			i += size - 1;
+		if (alloc_addr[i] == -1) {
+			continue;
 		}
+		if (leaksDetected == false) {
+			str << "\e[0;33mMemory leaks detected at line " << loc.line()
+			<< "\e[0m\n";
+			leaksDetected = true;
+		}
+		int size = 1;
+		for (std::size_t j = i; alloc_addr[j] == alloc_addr[i] && j < sizeof(fake_heap); ++j)
+			++size;
+		str << "\e[0;96mleak at " << i << " of size " << size << ":\n	\"";
+		for (std::size_t j = i; alloc_addr[j] == alloc_addr[i] && j < sizeof(fake_heap); ++j)
+			str << sanitize_char(fake_heap[j]);
+		str << "\"\n\e[0m";
+		i += size - 1;
 	}
-	if (leaksDetected == true)
-		abort();
+	if (leaksDetected == true) {
+		transmit(logFD, str.str().c_str());
+		exit(2);
+	}
 }
 
 extern "C" {
@@ -116,7 +113,6 @@ void *malloc(size_t size)
 	int keep_reading = 1;
 	if (forceNull == 1)
 	{
-		write(STDOUT_FILENO, "null malloc\n", 12);
 		forceNull = 0;
 		return NULL;
 	}

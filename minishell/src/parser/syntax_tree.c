@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 17:24:08 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/28 01:35:49 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/07 14:47:20 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,33 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-static void	destroy_command(t_command *command)
+#include "libft.h"
+
+void	add_redirect(t_command *command, char *redir, char *file)
+{
+	char	*redir_type;
+
+	if (redir == NULL || command == NULL || file == NULL)
+		return ;
+	redir_type = (char *)malloc(2);
+	if (redir_type == NULL)
+		return ;
+	redir_type[1] = '\0';
+	if (redir[0] == '<' && redir[1] == '\0')
+		redir_type[0] = '1';
+	else if (redir[0] == '<' && redir[1] == '<' && redir[2] == '\0')
+		redir_type[0] = '3';
+	else if (redir[0] == '>' && redir[1] == '\0')
+		redir_type[0] = '2';
+	else if (redir[0] == '>' && redir[1] == '>' && redir[2] == '\0')
+		redir_type[0] = '4';
+	else
+		redir_type[0] = '5';
+	push_token(command->redir_types, redir_type);
+	push_token(command->redirects, file);
+}
+
+void	delete_command(t_command *command)
 {
 	if (command == NULL)
 		return ;
@@ -25,11 +51,9 @@ static void	destroy_command(t_command *command)
 	if (command->command != NULL)
 		free(command->command);
 	command->command = NULL;
-	command->size = 0;
-	command->capacity = 0;
 }
 
-static void	destroy_command_item(t_inner_tree_item *item, t_op_or_cmd type)
+void	delete_command_item(t_inner_tree_item *item, t_op_or_cmd type)
 {
 	if (item == NULL)
 		return ;
@@ -40,7 +64,7 @@ static void	destroy_command_item(t_inner_tree_item *item, t_op_or_cmd type)
 	}
 	else if (type == command && item->command != NULL)
 	{
-		destroy_command(item->command);
+		delete_command(item->command);
 		free(item->command);
 		item->command = NULL;
 	}
@@ -53,9 +77,10 @@ void		delete_syntax_tree(t_syntax_tree **tree)
 	if (tree == NULL || *tree == NULL)
 		return ;
 	t = *tree;
-	destroy_command_item(&t->contents.contents, t->contents.type);
+	delete_command_item(&t->contents.contents, t->contents.type);
 	delete_syntax_tree(&t->left);
 	delete_syntax_tree(&t->right);
+	free(*tree);
 	*tree = NULL;
 }
 
@@ -81,10 +106,19 @@ t_command	*create_command(char *command)
 		free(cmd);
 		return (NULL);
 	}
-	cmd->size = 0;
-	cmd->capacity = 10;
 	cmd->command = command;
+	if (cmd->command != NULL)
+		push_token(cmd->args, ft_strdup(command));
 	return (cmd);
+}
+
+void	add_arg(t_command *command, char *arg)
+{
+	if (command == NULL || arg == NULL)
+		return ;
+	if (command->command == NULL)
+		command->command = ft_strdup(arg);
+	push_token(command->args, arg);
 }
 
 void		add_op_to_syntax_tree(t_syntax_tree **head, char *oper,
@@ -95,46 +129,58 @@ void		add_op_to_syntax_tree(t_syntax_tree **head, char *oper,
 	if (oper == NULL || cmd == NULL || head == NULL)
 		return ;
 	node = (t_syntax_tree *)malloc(sizeof(*node));
-	if (*head == NULL)
-		*head = node;
-	node->right = NULL;
+	if (node == NULL)
+		return ;
+	node->left = *head;
+	*head = node;
 	node->contents.type = op;
 	node->contents.contents.operator_word = oper;
-	node->left = (t_syntax_tree *)malloc(sizeof(t_syntax_tree));
-	if (node->left == NULL)
+	node->right = (t_syntax_tree *)malloc(sizeof(t_syntax_tree));
+	if (node->right == NULL)
 		return ;
-	node->left->left = NULL;
-	node->left->right = NULL;
-	node->left->contents.type = command;
-	node->left->contents.contents.command = cmd;
+	node->right->left = NULL;
+	node->right->right = NULL;
+	node->right->contents.type = command;
+	node->right->contents.contents.command = cmd;
 	if (node != *head)
 		node->right = *head;
+=======
+	node->right->left = NULL;
+	node->right->right = NULL;
+	node->right->contents.type = command;
+	node->right->contents.contents.command = cmd;
+>>>>>>> Stashed changes
 }
 
-void	add_cmd_to_syntax_tree(t_syntax_tree **head,
+static void add_command(t_syntax_tree *node, t_command *command1)
+{
+	if (node == NULL || command1 == NULL)
+		return ;
+	node->left = NULL;
+	node->right = NULL;
+	node->contents.type = command;
+	node->contents.contents.command = command1;
+}
+
+void	create_syntax_tree(t_syntax_tree **head, char *oper,
 			t_command *command1, t_command *command2)
 {
 	t_syntax_tree	*node;
 
-	if (command1 == NULL || command2 == NULL || head == NULL)
+	if (command1 == NULL || command2 == NULL
+		|| oper == NULL || head == NULL)
 		return ;
 	node = (t_syntax_tree *)malloc(sizeof(*node));
+	if (node == NULL)
+		return ;
+	node->contents.type = op;
+	node->contents.contents.operator_word = oper;
 	if (*head == NULL)
 		*head = node;
 	node->right = (t_syntax_tree *)malloc(sizeof(*node));
 	node->left = (t_syntax_tree *)malloc(sizeof(*node));
 	if (node->left != NULL)
-	{
-		node->left->contents.contents.command = command1;
-		node->left->contents.type = command;
-		node->left->left = NULL;
-		node->left->right = NULL;
-	}
+		add_command(node->left, command1);
 	if (node->right != NULL)
-	{
-		node->left->contents.contents.command = command2;
-		node->right->contents.type = command;
-		node->right->left = NULL;
-		node->right->right = NULL;
-	}
+		add_command(node->right, command2);
 }

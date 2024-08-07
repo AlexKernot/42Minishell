@@ -6,17 +6,53 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/25 13:58:28 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/07 14:46:53 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.hpp"
+#include "tester.hpp"
 
 #include <iostream>
 #include <vector>
+#include <sstream>
+
+#include <unistd.h>
+
+#include "individualTest.hpp"
+
+#include "testerTest.hpp"
+#include "addSymbolAndWordTest.hpp"
+#include "copyStringTest.hpp"
+#include "extractStringTests.hpp"
+#include "getTypeTests.hpp"
+#include "parseTests.hpp"
+#include "syntaxTreeTests.hpp"
+#include "shuntingYardTests.hpp"
 
 extern "C" {
 	#include "tokenizer.h"
+}
+
+std::vector<std::string> Logger::logMessages = {};
+
+void Logger::log(const std::source_location& loc, const std::string& message)
+{
+	std::stringstream str;
+	
+	str << "[" << loc.function_name() << "] "
+		<< loc.file_name() << ", line " << loc.line() << ":\n	"
+		<< message << "\n";
+	logMessages.push_back(str.str());
+}
+
+void Logger::flush()
+{
+	for (const std::string& a : logMessages)
+	{
+		std::cout << a;
+	}
+	std::cout << std::endl;
 }
 
 char *createStr(const char *text)
@@ -129,20 +165,34 @@ int main(int ac, char *av[])
 	results.push_back(addSymbolAndWordTest());
 	std::cout << "\nParse:\n";
 	results.push_back(parseTest());
-	std::cout << "\nCommand Queue:\n";
-	results.push_back(commandQueueTest());
+	std::cout << "\nSyntax tree tests:\n";
+	results.push_back(syntaxTreeTests());
 	std::cout << "\nShunting yard tests:\n";
 	results.push_back(shuntingYardTest());
 	
 	std::cout << "\n\nmalloc and free tests: " << results[0].first << " passed " << results[0].second << " failed.\n";
-	std::cout << "copy_string: " << results[1].first << " passed " << results[1].second << " failed.\n";
 	std::cout << "extract_string: " << results[2].first << " passed " << results[2].second << " failed.\n";
 	std::cout << "type tests: " << results[3].first << " passed " << results[3].second << " failed.\n";
 	std::cout << "token_list tests " << results[4].first << " passed " << results[4].second << " failed.\n";
-	std::cout << "add symbols and words " << results[5].first << " passed " << results[5].second << " failed.\n";
 	std::cout << "parse tests " << results[6].first << " passed " << results[6].second << " failed.\n";
-	std::cout << "command queue tests " << results[7].first << " passed " << results[7].second << " failed\n";
+	std::cout << "syntax tree tests " << results[7].first << " passed " << results[7].second << " failed\n";
 	std::cout << "shunting yard tests " << results[8].first << " passed " << results[8].second << " failed\n";
 	std::cout << "\n";
+	Logger::log(std::source_location::current(), "Hellooooo");
+	Logger::flush();
+	return 0;*/
+
+	Tester tests({
+		new testerTestList(),
+		new addSymbolTestList(),
+		new addWordTestList(),
+		new copyStringTestList(),
+		new extractStringTestList(),
+		new getTypeTests(),
+		new parseTestList(),
+		new syntaxTreeTestList(),
+		new shuntingYardTestList()
+	});
+	tests.test();
 	return 0;
 }
