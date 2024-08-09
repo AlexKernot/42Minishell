@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 17:30:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/04 19:12:43 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/07 17:49:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class Tester
 {
 public:
 	Tester(std::vector<fileTests *>&& tests);
-	void test();
+	void test(bool debug, std::string testName);
 private:
 	std::vector<fileTests *> testList;
 };

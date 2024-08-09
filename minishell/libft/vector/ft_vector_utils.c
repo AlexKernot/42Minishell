@@ -41,5 +41,7 @@ void	*vector_end(t_vector *vector)
 {
 	const int	index = vector->size - 1;
 
+	if (index < 0)
+		return (NULL);
 	return (vector->array[index]);
 }

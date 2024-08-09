@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/05 18:28:50 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:34:16 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,6 @@
 extern "C" { 
 	#include "tokenizer.h"
 }
-
-class Logger {
-public:
-	static void log(const std::source_location& loc, const std::string& message);
-	static void flush();
-private:
-	Logger();
-	static std::vector<std::string> logMessages;
-};
 
 void check_memory(const std::source_location& loc, int logFD);
 # define check_mem(logFD) check_memory(std::source_location::current(), logFD)

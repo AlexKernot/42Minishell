@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:29:19 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/05 18:34:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/09 13:54:37 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ extern "C" {
 	#include "ft_transmit.h"
 }
 
+#ifndef DEBUG
+
 // A really bad malloc override for testing my program
-char fake_heap[2048];
+char fake_heap[4096];
 int alloc_addr[sizeof(fake_heap)];
 
 int forceNull = 0;
@@ -165,3 +167,34 @@ void free(void *ptr)
 	}
 }
 }
+
+#else
+
+extern "C" void malloc_return_null()
+{
+	return ;
+}
+
+extern "C" void malloc_revert()
+{
+	return ;
+}
+
+void check_memory(const std::source_location& loc, int logFD)
+{
+	(void)loc;
+	(void)logFD;
+	return ;
+}
+
+void print_malloc()
+{
+	return ;
+}
+
+void malloc_init()
+{
+	return ;
+}
+
+#endif

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 17:24:08 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/07 14:47:20 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/08 09:48:10 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,12 +144,6 @@ void		add_op_to_syntax_tree(t_syntax_tree **head, char *oper,
 	node->right->contents.contents.command = cmd;
 	if (node != *head)
 		node->right = *head;
-=======
-	node->right->left = NULL;
-	node->right->right = NULL;
-	node->right->contents.type = command;
-	node->right->contents.contents.command = cmd;
->>>>>>> Stashed changes
 }
 
 static void add_command(t_syntax_tree *node, t_command *command1)
@@ -173,10 +167,9 @@ void	create_syntax_tree(t_syntax_tree **head, char *oper,
 	node = (t_syntax_tree *)malloc(sizeof(*node));
 	if (node == NULL)
 		return ;
+	*head = node;
 	node->contents.type = op;
 	node->contents.contents.operator_word = oper;
-	if (*head == NULL)
-		*head = node;
 	node->right = (t_syntax_tree *)malloc(sizeof(*node));
 	node->left = (t_syntax_tree *)malloc(sizeof(*node));
 	if (node->left != NULL)

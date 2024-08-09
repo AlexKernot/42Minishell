@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 15:04:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/05 18:41:43 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/07 18:19:42 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,17 @@
 extern "C" {
 	#include "ft_pipe.h"
 	#include "ft_transmit.h"
+}
+
+static std::string lower(const std::string& str)
+{
+	std::string retval;
+	
+	for (const char& a : str)
+	{
+		retval.push_back(tolower(a));
+	}
+	return retval;
 }
 
 fileTests::fileTests(std::string testName, std::vector<individualTest *>&& tests)
@@ -38,7 +49,12 @@ void fileTests::registerTest(individualTest *test)
 	testList.push_back(test);
 }
 
-std::string fileTests::run() const
+std::string fileTests::getTestName() const
+{
+	return name;
+}
+
+std::string fileTests::run(bool debug, std::string testName) const
 {
 	write(STDOUT_FILENO, "[", 1);
 	write(STDOUT_FILENO, name.c_str(), strlen(name.c_str()));
@@ -53,19 +69,32 @@ std::string fileTests::run() const
 	int i = 0;
 	for (individualTest* test : testList)
 	{
-		const std::string testResult = test->run();
-		delete test;
-		++i;
-		if (i >= resultsPerLine) {
-			write(STDOUT_FILENO, "\n", 1);
-			for (int j = 0; j < 40; ++j)
-				write(STDOUT_FILENO, " ", 1);
-			i = 0;
+		if (testName == "" || lower(test->getTestName()) == testName
+			|| lower(getTestName()) == testName)
+		{
+			const std::string testResult = test->run(debug);
+			++i;
+			if (i >= resultsPerLine) {
+				write(STDOUT_FILENO, "\n", 1);
+				for (int j = 0; j < 40; ++j)
+					write(STDOUT_FILENO, " ", 1);
+				i = 0;
+			}
+			if (testResult.empty() == true)
+				continue;
+			results.append(testResult);
+			results.push_back('\n');
+		} else {
+			write(STDOUT_FILENO, "_", 1);
+			++i;
+			if (i >= resultsPerLine) {
+				write(STDOUT_FILENO, "\n", 1);
+				for (int j = 0; j < 40; ++j)
+					write(STDOUT_FILENO, " ", 1);
+				i = 0;
+			}
 		}
-		if (testResult.empty() == true)
-			continue;
-		results.append(testResult);
-		results.push_back('\n');
+		delete test;
 	}
 	write(STDOUT_FILENO, "\n", 1);
 	return results;

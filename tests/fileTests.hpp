@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 15:05:53 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/04 19:10:48 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/07 18:07:55 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ public:
 	fileTests(std::string testName, std::vector<individualTest *>&& tests);
 	fileTests(std::string testName);
 	void registerTest(individualTest *test);
-	std::string run() const;
+	std::string run(bool debug, std::string testName) const;
+	std::string getTestName() const;
 private:
 	std::string name;
 	std::vector<individualTest *> testList;

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 19:15:55 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/07 14:45:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/08 09:47:01 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,30 @@
 
 # include <individualTest.hpp>
 # include <fileTests.hpp>
+
+class shuntingYardCreateSyntaxTree : public individualTest {
+public:
+	shuntingYardCreateSyntaxTree()
+		: individualTest("shuntingYardCreateSyntaxTree")
+		{	}
+	void test(int logFD) const override;
+};
+
+class shuntingYardPurgeOneCMDEmpty : public individualTest {
+public:
+	shuntingYardPurgeOneCMDEmpty()
+		: individualTest("shuntingYardPurgeOneCMDEmpty")
+		{	}
+	void test(int logFD) const override;
+};
+
+class shuntingYardPurgeOneCMD : public individualTest {
+public:
+	shuntingYardPurgeOneCMD()
+		: individualTest("shuntingYardPurgeOneCMD")
+		{	}
+	void test(int logFD) const override;
+};
 
 class shuntingYardPurgeStack : public individualTest {
 public:

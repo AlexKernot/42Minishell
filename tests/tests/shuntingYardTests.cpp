@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 16:41:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/07 14:46:27 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:54:25 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,6 @@ static void transmitVec(int logFD, const std::string testName,
 
 static void postfix(t_syntax_tree *node, std::vector<std::string>& result)
 {
-	if (node != NULL)
-		std::cout << "postfix " << node << " " << node->left << " " << node->right << std::endl;
 	if (node == NULL)
 		return ;
 	if (node->left != NULL)
@@ -65,7 +63,6 @@ static void postfix(t_syntax_tree *node, std::vector<std::string>& result)
 			result.push_back("(NULL)");
 		else
 			result.push_back(node->contents.contents.operator_word);
-		std::cout << result.back() << std::endl;
 	}
 	else
 	{
@@ -73,32 +70,121 @@ static void postfix(t_syntax_tree *node, std::vector<std::string>& result)
 			result.push_back("(NULL)");
 		else
 			result.push_back(node->contents.contents.command->command);
-		std::cout << result.back() << std::endl;
 	}
-	std::cout << "End" << std::endl;
 }
 
-static bool expectTree(t_syntax_tree *tree, t_stack *c_stack, t_stack *o_stack,
+static void expectTree(int logFD, t_syntax_tree *tree, t_stack *c_stack, t_stack *o_stack,
 	const int c_size, const int o_size, const std::vector<std::string>& cmp)
 {
-	if (c_stack == NULL || o_stack == NULL)
-		return false;
+	std::stringstream strstr;
+	if (c_stack == NULL || o_stack == NULL) {
+		strstr << "c_stack or o_stack is null\n";
+		transmit(logFD, strstr.str().c_str());
+		exit(1);
+	}
 	if (cmp.empty() == true) {
 		if (tree == NULL)
-			return true;
-		return false;
+			return ;
 	}
 	if (tree == NULL)
-		return false;
+		strstr << "tree is (NULL)";
 	if (c_stack->data->size != c_size)
-		return false;
+		strstr << " c_stack expected " << c_size << " got " << c_stack->data->size;
 	if (o_stack->data->size != o_size)
-		return false;
+		strstr << " o_stack expected " << o_size << " got " << o_stack->data->size;
 	std::vector<std::string> resVal;
 	postfix(tree, resVal);
 	if (cmp != resVal)
-		return false;
-	return true;
+	{
+		strstr << " comparison failed:\nExpected: ";
+		if (cmp.empty() == true)
+			strstr << "(NULL)";
+		for (const std::string &a : cmp) {
+			strstr << a << " ";
+		}
+		strstr << "\nReceived: ";
+		if (resVal.empty() == true)
+			strstr << "(NULL)";
+		for (const std::string& a : resVal) {
+			strstr << a << " ";
+		}
+		strstr << "\n";
+	}
+	if (strstr.str().size() != 0)
+	{
+		transmit(logFD, strstr.str().c_str());
+		exit(1);
+	}
+}
+
+void shuntingYardCreateSyntaxTree::test(int logFD) const
+{
+	t_syntax_tree *tree;
+	create_syntax_tree(&tree, NULL, NULL, NULL);
+	create_syntax_tree(&tree, createStr("c"),
+		create_command(createStr("a")), create_command(createStr("b")));
+	fassert(logFD, tree != NULL);
+	fassert(logFD, tree->contents.type == op);
+	fassert(logFD, std::string(tree->contents.contents.operator_word) == "c");
+	fassert(logFD, tree->left != NULL);
+	fassert(logFD, tree->right != NULL);
+	fassert(logFD, tree->left->left == NULL);
+	fassert(logFD, tree->left->right == NULL);
+}
+
+void shuntingYardPurgeOneCMD::test(int logFD) const
+{
+	t_syntax_tree *tree;
+	create_syntax_tree(&tree, createStr("c"),
+		create_command(createStr("a")), create_command(createStr("b")));
+	t_stack *c_stack = stack_ctor(10);
+	t_stack *o_stack = stack_ctor(10);
+	t_syntax_tree *oldHead = tree;
+
+	stack_push(c_stack, create_command(createStr("Test")));
+	fassert(logFD, c_stack->data->size == 1);
+	purge_stack(&tree, c_stack, o_stack);
+	fassert(logFD, c_stack->data->size == 0);
+	fassert(logFD, tree != oldHead);
+	fassert(logFD, tree->contents.type == op);
+	fassert(logFD, std::string(tree->contents.contents.operator_word) == ".");
+	fassert(logFD, tree->left == oldHead);
+	fassert(logFD, tree->right != NULL);
+	fassert(logFD, tree->right->left == NULL);
+	fassert(logFD, tree->right->right == NULL);
+	fassert(logFD, tree->right->contents.type == command);
+	fassert(logFD, std::string(tree->right->contents.contents.command->command) == "Test");
+	
+	delete_syntax_tree(&tree);
+	stack_dtor(&c_stack);
+	stack_dtor(&o_stack);
+	check_mem(logFD);
+}
+
+void shuntingYardPurgeOneCMDEmpty::test(int logFD) const
+{
+	t_syntax_tree *tree = NULL;
+	t_stack *c_stack = stack_ctor(10);
+	t_stack *o_stack = stack_ctor(10);
+
+	stack_push(c_stack, create_command(createStr("Test")));
+	fassert(logFD, c_stack->data->size == 1);
+	fassert(logFD, o_stack->data->size == 0);
+	purge_stack(&tree, c_stack, o_stack);
+	fassert(logFD, tree != NULL);
+	fassert(logFD, tree->right == NULL);
+	fassert(logFD, c_stack->data->size == 0);
+	fassert(logFD, tree->contents.type == op);
+	fassert(logFD, std::string(tree->contents.contents.operator_word) == ".");
+	fassert(logFD, tree->left->left == NULL);
+	fassert(logFD, tree->left->right == NULL);
+	fassert(logFD, tree->left->contents.type == command);
+	fassert(logFD, std::string(tree->left->contents.contents.command->command) == "Test");
+	
+	delete_syntax_tree(&tree);
+	stack_dtor(&c_stack);
+	stack_dtor(&o_stack);
+	check_mem(logFD);
 }
 
 void shuntingYardPurgeStack::test(int logFD) const
@@ -108,21 +194,23 @@ void shuntingYardPurgeStack::test(int logFD) const
 	fassert(logFD, c_stack != NULL);
 	t_stack *o_stack = stack_ctor(10);
 	fassert(logFD, o_stack != NULL);
+	t_syntax_tree *tree = NULL;
+	purge_stack(&tree, c_stack, o_stack);
+	fassert(logFD, tree == NULL);
 
-	stack_push(c_stack, create_command(createStr("a")));
-	stack_push(c_stack, create_command(createStr("b")));
 	stack_push(c_stack, create_command(createStr("d")));
+	stack_push(c_stack, create_command(createStr("b")));
+	stack_push(c_stack, create_command(createStr("a")));
 	fassert(logFD, c_stack->data->size == 3);
 	
-	stack_push(o_stack, createStr("c"));
 	stack_push(o_stack, createStr("e"));
+	stack_push(o_stack, createStr("c"));
 	fassert(logFD, o_stack->data->size == 2);
 
 	purge_stack(NULL, c_stack, o_stack);
 	fassert(logFD, c_stack->data->size == 3);
 	fassert(logFD, o_stack->data->size == 2);
 
-	t_syntax_tree *tree = NULL;
 	purge_stack(&tree, c_stack, NULL);
 	fassert(logFD, tree == NULL);
 	fassert(logFD, c_stack->data->size == 3);
@@ -135,29 +223,28 @@ void shuntingYardPurgeStack::test(int logFD) const
 	fassert(logFD, c_stack->data->size == 0);
 	fassert(logFD, o_stack->data->size == 0);
 	std::vector<std::string> result;
-	std::vector<std::string> cmp = {"a", "b", "c", "d", "e", "f"};
+	std::vector<std::string> cmp = {"a", "b", "c", "d", "e"};
 	postfix(tree, result);
 	if (result != cmp)
 	{
 		transmitVec(logFD, getTestName(), result, cmp);
-		abort();
+		exit(1);
 	}
 
 	stack_push(c_stack, create_command(createStr("g")));
-	stack_push(c_stack, create_command(createStr("h")));
-	fassert(logFD, c_stack->data->size == 2);
-	stack_push(o_stack, createStr("i"));
+	fassert(logFD, c_stack->data->size == 1);
+	stack_push(o_stack, createStr("h"));
 	fassert(logFD, o_stack->data->size == 1);
 	purge_stack(&tree, c_stack, o_stack);
 	result.clear();
-	cmp = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+	cmp = {"a", "b", "c", "d", "e", "g", "h"};
 	postfix(tree, result);
 	fassert(logFD, c_stack->data->size == 0);
 	fassert(logFD, o_stack->data->size == 0);
 	if (result != cmp)
 	{
 		transmitVec(logFD, getTestName(), result, cmp);
-		abort();
+		exit(1);
 	}
 	stack_dtor(&c_stack);
 	stack_dtor(&o_stack);
@@ -177,42 +264,40 @@ void shuntingYardAddBrackets::test(int logFD) const
 	
 	add_brackets(NULL, NULL, NULL, NULL);
 	add_brackets(NULL, c_stack, o_stack, bracket);
-	add_brackets(tree, NULL, o_stack, bracket);
+	add_brackets(&tree, NULL, o_stack, bracket);
 	fassert(logFD, o_stack->data->size == 0);
 	fassert(logFD, tree == NULL);
-	add_brackets(tree, c_stack, NULL, bracket);
+	add_brackets(&tree, c_stack, NULL, bracket);
 	fassert(logFD, c_stack->data->size == 0);
 	fassert(logFD, tree == NULL);
-	add_brackets(tree, c_stack, o_stack, NULL);
+	add_brackets(&tree, c_stack, o_stack, NULL);
 	fassert(logFD, c_stack->data->size == 0);
 	fassert(logFD, o_stack->data->size == 0);
 	fassert(logFD, tree == NULL);
 
-	stack_push(c_stack, create_command(createStr("a")));
-	stack_push(c_stack, create_command(createStr("b")));
+	stack_push(c_stack, create_command(createStr("y")));
 	stack_push(c_stack, create_command(createStr("d")));
-	stack_push(c_stack, create_command(createStr("e")));
+	stack_push(c_stack, create_command(createStr("b")));
+	stack_push(c_stack, create_command(createStr("a")));
 	fassert(logFD, c_stack->data->size == 4);
 
 	stack_push(o_stack, createStr("z"));
 	fassert(logFD, o_stack->data->size == 1);
-	add_brackets(tree, c_stack, o_stack, createStr("("));
+	add_brackets(&tree, c_stack, o_stack, createStr("("));
 	fassert(logFD, o_stack->data->size == 2);
-	stack_push(o_stack, createStr("("));
+	stack_push(o_stack, createStr("e"));
 	stack_push(o_stack, createStr("c"));
-	stack_push(o_stack, createStr("f"));
-	fassert(logFD, o_stack->data->size == 5);
+	fassert(logFD, o_stack->data->size == 4);
 
-	add_brackets(tree, c_stack, o_stack, createStr(")"));
+	add_brackets(&tree, c_stack, o_stack, createStr(")"));
 	fassert(logFD, o_stack->data->size == 1);
-	fassert(logFD, c_stack->data->size == 0);
 	std::vector<std::string> resVec;
-	std::vector<std::string> cmp = {"a", "b", "c", "d", "e", "f"};
+	std::vector<std::string> cmp = {"a", "b", "c", "d", "e"};
 	postfix(tree, resVec);
 	if (resVec != cmp)
 	{
 		transmitVec(logFD, getTestName(), resVec, cmp);
-		abort();
+		exit(1);
 	}
 	stack_dtor(&c_stack);
 	stack_dtor(&o_stack);
@@ -234,44 +319,52 @@ void shuntingYardAddOperator::test(int logFD) const
 	add_operator(NULL, c_stack, o_stack, token);
 	fassert(logFD, c_stack->data->size == 0);
 	fassert(logFD, o_stack->data->size == 0);
-	add_operator(tree, NULL, o_stack, token);
+	add_operator(&tree, NULL, o_stack, token);
 	fassert(logFD, tree == NULL);
 	fassert(logFD, o_stack->data->size == 0);
-	add_operator(tree, c_stack, o_stack, NULL);
+	add_operator(&tree, c_stack, o_stack, NULL);
 	fassert(logFD, c_stack->data->size == 0);
 	fassert(logFD, o_stack->data->size == 0);
 	fassert(logFD, tree == NULL);
+
+	stack_push(c_stack, create_command(createStr("a")));
+	stack_push(c_stack, create_command(createStr("a")));
+	stack_push(c_stack, create_command(createStr("a")));
+	stack_push(c_stack, create_command(createStr("a")));
+	stack_push(c_stack, create_command(createStr("a")));
+	stack_push(c_stack, create_command(createStr("a")));
 	
 	// If an operator is pushed, check if it is pushed to the o_stack
-	add_operator(tree, c_stack, o_stack, token);
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 1, {}));
+	add_operator(&tree, c_stack, o_stack, token);
+	expectTree(logFD, tree, c_stack, o_stack, 6, 1, {});
 	
 	// If another operator is pushed, check if the last operator is
 	// added to the tree.
-	add_operator(tree, c_stack, o_stack, createStr("||"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 1, {"|"}));
+	add_operator(&tree, c_stack, o_stack, createStr("||"));
+	fassert(logFD, tree != NULL);
+	expectTree(logFD, tree, c_stack, o_stack, 4, 1, {"a", "a", "|"});
 	
 	// Ensure operator with lower precedence pushes operator with
 	// higher precedence onto tree
-	add_operator(tree, c_stack, o_stack, createStr("a"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 1, {"|", "||"}));
+	add_operator(&tree, c_stack, o_stack, createStr("a"));
+	expectTree(logFD, tree, c_stack, o_stack, 3, 1, {"a", "a", "|", "a", "||"});
 
 	// Higher precedence operators don't push lower precence operators
 	// onto the tree.
-	add_operator(tree, c_stack, o_stack, createStr("||"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 2, {"|", "||"}));
+	add_operator(&tree, c_stack, o_stack, createStr("||"));
+	expectTree(logFD, tree, c_stack, o_stack, 3, 2, {"a", "a", "|", "a", "||"});
 
 	// Ensure brackets don't push anything onto the tree
-	add_operator(tree, c_stack, o_stack, createStr("("));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 3, {"|", "||"}));
+	add_operator(&tree, c_stack, o_stack, createStr("("));
+	expectTree(logFD, tree, c_stack, o_stack, 3, 3, {"a", "a", "|", "a", "||"});
 
 	// Ensure bracket doesn't get pushed onto tree
-	add_operator(tree, c_stack, o_stack, createStr("|"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 4, {"|", "||"}));
+	add_operator(&tree, c_stack, o_stack, createStr("|"));
+	expectTree(logFD, tree, c_stack, o_stack, 3, 4, {"a", "a", "|", "a", "||"});
 
 	// Ensure closed brackets push operators
-	add_operator(tree, c_stack, o_stack, createStr(")"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 2, {"|", "||", "|"}));
+	add_operator(&tree, c_stack, o_stack, createStr(")"));
+	expectTree(logFD, tree, c_stack, o_stack, 2, 2, {"a", "a", "|", "a", "||", "a", "|"});
 	
 	stack_dtor(&c_stack);
 	stack_dtor(&o_stack);
@@ -287,65 +380,65 @@ void shuntingYardAddToken::test(int logFD) const
 	fassert(logFD, c_stack != NULL);
 	fassert(logFD, o_stack != NULL);
 
-	char *token = createStr("command1");
+	char *token = createStr("command2");
 
 	// Ensure NULL doesn't modify data or crash
 	add_token(NULL, NULL, NULL, NULL);
 	add_token(NULL, c_stack, o_stack, token);
 	fassert(logFD, c_stack->data->size == 0);
 	fassert(logFD, o_stack->data->size == 0);
-	add_token(tree, NULL, o_stack, token);
+	add_token(&tree, NULL, o_stack, token);
 	fassert(logFD, tree == NULL);
 	fassert(logFD, o_stack->data->size == 0);
-	add_token(tree, c_stack, NULL, token);
+	add_token(&tree, c_stack, NULL, token);
 	fassert(logFD, tree == NULL);
 	fassert(logFD, c_stack->data->size == 0);
 
 	// Ensure phrase that isn't operator is added to c_stack
-	add_token(tree, c_stack, o_stack, token);
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 1, 0, {}));
-	fassert(logFD, ((t_command *)stack_front(o_stack))->args->size == 1);
+	add_token(&tree, c_stack, o_stack, token);
+	expectTree(logFD, tree, c_stack, o_stack, 1, 0, {});
+	fassert(logFD, ((t_command *)stack_front(c_stack))->args->size == 1);
 
 	// Ensure phrase that isn't operator is added to cmd args
-	add_token(tree, c_stack, o_stack, createStr("Arg"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 1, 0, {}));
-	fassert(logFD, ((t_command *)stack_front(o_stack))->args->size == 2);
+	add_token(&tree, c_stack, o_stack, createStr("Arg"));
+	expectTree(logFD, tree, c_stack, o_stack, 1, 0, {});
+	fassert(logFD, ((t_command *)stack_front(c_stack))->args->size == 2);
 
 	// Add operator to o_stack
-	add_token(tree, c_stack, o_stack, createStr("|"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 1, 1, {}));
+	add_token(&tree, c_stack, o_stack, createStr("|"));
+	expectTree(logFD, tree, c_stack, o_stack, 1, 1, {});
 
 	// Add another command
-	add_token(tree, c_stack, o_stack, createStr("command2"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 2, 1, {}));
+	add_token(&tree, c_stack, o_stack, createStr("command1"));
+	expectTree(logFD, tree, c_stack, o_stack, 2, 1, {});
 
 	// Make sure tree is constructed properly
-	add_token(tree, c_stack, o_stack, createStr("|"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 1,
-		{"command1", "command2", "|"}));
+	add_token(&tree, c_stack, o_stack, createStr("|"));
+	expectTree(logFD, tree, c_stack, o_stack, 0, 1,
+		{"command1", "command2", "|"});
 
 	// Test brackets are handled correctly
-	add_token(tree, c_stack, o_stack, createStr("("));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 2,
-		{"command1", "command2", "|"}));
+	add_token(&tree, c_stack, o_stack, createStr("("));
+	expectTree(logFD, tree, c_stack, o_stack, 0, 2,
+		{"command1", "command2", "|"});
 
 	// Add command within brackets
-	add_token(tree, c_stack, o_stack, createStr("command3"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 1, 2,
-		{"command1", "command2", "|"}));
+	add_token(&tree, c_stack, o_stack, createStr("command4"));
+	expectTree(logFD, tree, c_stack, o_stack, 1, 2,
+		{"command1", "command2", "|"});
 
-	add_token(tree, c_stack, o_stack, createStr("&&"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 1, 3,
-		{"command1", "command2", "|"}));
+	add_token(&tree, c_stack, o_stack, createStr("&&"));
+	expectTree(logFD, tree, c_stack, o_stack, 1, 3,
+		{"command1", "command2", "|"});
 
-	add_token(tree, c_stack, o_stack, createStr("command4"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 2, 2,
-		{"command1", "command2", "|"}));
+	add_token(&tree, c_stack, o_stack, createStr("command3"));
+	expectTree(logFD, tree, c_stack, o_stack, 2, 3,
+		{"command1", "command2", "|"});
 	
 	// Close brackets
-	add_token(tree, c_stack, o_stack, createStr(")"));
-	fassert(logFD, expectTree(tree, c_stack, o_stack, 0, 1,
-		{"command1", "command2", "|", "command3", "command4", "&&"}));
+	add_token(&tree, c_stack, o_stack, createStr(")"));
+	expectTree(logFD, tree, c_stack, o_stack, 1, 1,
+		{"command1", "command2", "|", "command3", "&&"});
 
 	delete_syntax_tree(&tree);
 	fassert(logFD, tree == NULL);
@@ -391,7 +484,7 @@ void shuntingYardConvertPostfix::test(int logFD) const
 		exit(1);
 	}
 	delete_syntax_tree(&result);
-	delete_token_list(&list);
+	free(list);
 	check_mem(logFD);
 }
 
@@ -440,15 +533,18 @@ shuntingYardTestList::shuntingYardTestList()
 		new shuntingYardGetPrecedence("a|a", 0),
 		new shuntingYardGetPrecedence("|&", 0),
 		
-		// new shuntingYardPurgeStack(),
+		new shuntingYardCreateSyntaxTree(),
+		new shuntingYardPurgeStack(),
+		new shuntingYardPurgeOneCMD(),
+		new shuntingYardPurgeOneCMDEmpty(),
 		new shuntingYardAddBrackets(),
 		new shuntingYardAddOperator(),
 		new shuntingYardAddToken(),
 		
 		new shuntingYardConvertPostfix({}, {}),
-		new shuntingYardConvertPostfix({"Command", "Arg1", "<<", "Redir"}, {"Command"}),
-		new shuntingYardConvertPostfix({"Command1", "|", "Command2"}, {"Command1", "Command2", "|"}),
-		new shuntingYardConvertPostfix({"Command1", "|", "Command2", "&&", "Command3"}, {"Command1", "Command2", "|", "Command3", "&&"}),
-		new shuntingYardConvertPostfix({"Command1", "|", "(", "Command2", "&&", "Command3", ")"}, {"Command1", "Command2", "Command3", "&&", "|"})
+		new shuntingYardConvertPostfix({"Command", "Arg1", "<<", "Redir"}, {"Command", "."}),
+		new shuntingYardConvertPostfix({"Command2", "|", "Command1"}, {"Command1", "Command2", "|"}),
+		new shuntingYardConvertPostfix({"Command2", "|", "Command1", "&&", "Command3"}, {"Command1", "Command2", "|", "Command3", "&&"}),
+		new shuntingYardConvertPostfix({"Command2", "|", "(", "Command1", "&&", "Command3", ")"}, {"Command3", "Command1", "&&", "Command2", "|"})
 	})
 	{	}

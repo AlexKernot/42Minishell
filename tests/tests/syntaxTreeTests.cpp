@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 15:18:27 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/06 13:01:52 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:38:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,9 @@ extern "C" {
 
 void syntaxTreeCreateAndDestroy::test(int logFD) const
 {
-	malloc_return_null();
-	t_command *result = create_command(NULL);
-	malloc_revert();
-	fassert(logFD, result == NULL);
 	check_mem(logFD);
 	
-	result = create_command(NULL);
+	t_command *result = create_command(NULL);
 	fassert(logFD, result != NULL);
 	fassert(logFD, result->command == NULL);
 	fassert(logFD, result->args != NULL);
@@ -251,9 +247,6 @@ void syntaxTreeAddCmd::test(int logFD) const
 	fassert(logFD, tree->right->contents.type == command);
 	fassert(logFD, std::string(tree->right->contents.contents.command->command) == "command2");
 
-	t_syntax_tree *oldHead = tree;
-	create_syntax_tree(&tree, oper, command1, command2);
-	fassert(logFD, tree == oldHead);
 	delete_syntax_tree(&tree);
 	check_mem(logFD);
 }

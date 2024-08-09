@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 14:53:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/05 20:55:34 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/07 18:13:37 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,8 +132,13 @@ std::string individualTest::returnWait(pid_t pid, int readFD) const
 	return "";
 }
 
-std::string individualTest::run() const
+std::string individualTest::run(bool debug) const
 {
+	if (debug == true)
+	{
+		test(STDOUT_FILENO);
+		return "";
+	}
 	int fds[2];
 	if (ft_pipe(fds) != 1)
 	{

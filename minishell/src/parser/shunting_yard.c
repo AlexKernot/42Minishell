@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:25:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/06 16:51:11 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/09 14:04:19 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,54 @@ int	get_precedence(const char *token)
 	return (0);
 }
 
-void	add_brackets(t_syntax_tree *tree, t_stack *c_stack,
+static void create_dummy(t_syntax_tree **tree, t_stack *c_stack, char *token)
+{
+	t_syntax_tree *node;
+
+	node = (t_syntax_tree *)malloc(sizeof(*node));
+	node->contents.type = op;
+	node->contents.contents.operator_word = token;
+	if (*tree == NULL)
+	{
+		*tree = node;
+		node->right = NULL;
+		node->left = (t_syntax_tree *)malloc(sizeof(*node->left));
+		node->left->left = NULL;
+		node->left->right = NULL;
+		node->left->contents.type = command;
+		node->left->contents.contents.command = stack_pop(c_stack);
+		return ;
+	}
+	node->left = *tree;
+	*tree = node;
+	node->right = (t_syntax_tree *)malloc(sizeof(*node->right));
+	node->right->left = NULL;
+	node->right->right = NULL;
+	node->right->contents.type = command;
+	node->right->contents.contents.command = stack_pop(c_stack);
+}
+
+static void append_syntax_tree(t_syntax_tree **tree, t_stack *c_stack,
+	t_stack *o_stack, char *token)
+{
+	if (tree == NULL || c_stack == NULL || o_stack == NULL || token == NULL)
+		return ;
+	if (o_stack->data->size == 0)
+	{
+		create_dummy(tree, c_stack, token);
+		return ;
+	}
+	else if (*tree == NULL)
+	{
+		create_syntax_tree(tree, stack_pop(o_stack),
+			stack_pop(c_stack), stack_pop(c_stack));
+		return ;
+	}
+	add_op_to_syntax_tree(tree, stack_pop(o_stack),
+		stack_pop(c_stack));
+}
+
+void	add_brackets(t_syntax_tree **tree, t_stack *c_stack,
 			t_stack *o_stack, char *token)
 {
 	if (tree == NULL || c_stack == NULL || o_stack == NULL || token == NULL)
@@ -69,10 +116,7 @@ void	add_brackets(t_syntax_tree *tree, t_stack *c_stack,
 		while (stack_front(o_stack) != NULL
 			&& ((char *)stack_front(o_stack))[0] != '(')
 		{
-			if (c_stack->data->size == 0)
-				return ;
-			add_op_to_syntax_tree(&tree, stack_pop(o_stack),
-				stack_pop(c_stack));
+			append_syntax_tree(tree, c_stack, o_stack, token);
 		}
 		if (stack_front(o_stack) != NULL
 			&& ((char *)stack_front(o_stack))[0] == '(')
@@ -93,41 +137,35 @@ int		is_brackets(const char *token)
 	return (0);
 }
 
-void	add_operator(t_syntax_tree *tree, t_stack *c_stack,
+void	add_operator(t_syntax_tree **tree, t_stack *c_stack,
 			t_stack *o_stack, char *token)
 {
 	const int	precedence = get_precedence(token);
 
 	if (tree == NULL || c_stack == NULL ||  o_stack == NULL ||token == NULL)
 		return ;
-	if ((token[0] == '(' && token[1] == '\0')
-		|| (token[0] == ')' && token[1] == '\0'))
+	if (is_brackets(token) == 1)
 		add_brackets(tree, c_stack, o_stack, token);
 	else
 	{
 		while (get_precedence(stack_front(o_stack)) >= precedence
 			&& o_stack->data->size != 0
 			&& is_brackets(stack_front(o_stack)) == 0)
-			add_op_to_syntax_tree(&tree, stack_pop(o_stack),
-				stack_pop(c_stack));
+			append_syntax_tree(tree, c_stack, o_stack, token);
 		stack_push(o_stack, token);
 	}
 }
 
-void	add_token(t_syntax_tree *tree, t_stack *c_stack, t_stack *o_stack,
+void	add_token(t_syntax_tree **tree, t_stack *c_stack, t_stack *o_stack,
 		char *token)
 {
 	static t_command	*last_command = NULL;
 
 	if (tree == NULL || c_stack == NULL || o_stack == NULL || token == NULL)
 		return ;
-	else if (is_operator(token))
+	if (is_operator(token))
 	{
-		if (tree == NULL)
-			create_syntax_tree(&tree, token,
-				stack_pop(c_stack), stack_pop(c_stack));
-		else
-			add_op_to_syntax_tree(&tree, token, stack_pop(c_stack));
+		add_operator(tree, c_stack, o_stack, token);
 		last_command = NULL;
 	}
 	else if (last_command == NULL)
@@ -161,11 +199,18 @@ void	purge_stack(t_syntax_tree **tree, t_stack *c_stack,
 {
 	if (tree == NULL || c_stack == NULL || o_stack == NULL)
 		return ;
+	if (c_stack->data->size == 1 && o_stack->data->size == 0)
+	{
+		create_dummy(tree, c_stack, ft_strdup("."));
+		return ;
+	}
 	if (*tree == NULL && o_stack->data->size >= 1 && c_stack->data->size >= 2)
+	{
 		create_syntax_tree(tree, (char *)stack_pop(o_stack),
 			(t_command *)stack_pop(c_stack),
 			(t_command *)stack_pop(c_stack));
-	while (stack_front(o_stack) != NULL && stack_front(c_stack) != NULL)
+	}
+	while (stack_front(o_stack) != NULL || stack_front(c_stack) != NULL)
 	{
 		add_op_to_syntax_tree(tree,
 			(char *)stack_pop(o_stack),
@@ -208,7 +253,7 @@ t_syntax_tree	*convert_postfix(t_token_list *tokens)
 			add_redirect(stack_front(c_stack), token,
 				get_token(tokens, i + 1));
 		else
-			add_token(syntax_tree, c_stack, o_stack, token);
+			add_token(&syntax_tree, c_stack, o_stack, token);
 		++i;
 	}
 	purge_stack(&syntax_tree, c_stack, o_stack);
