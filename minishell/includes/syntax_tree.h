@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 16:57:24 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/28 17:58:25 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 16:51:57 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef struct s_syntax_tree
 
 t_command	*create_command(char *command);
 void		add_arg(t_command *command, char *arg);
-void		add_redirect(t_command *command, char *redir, char *file);
+void		add_redirect(t_command *command, char *redir, char *file, uint16_t *i);
 void		add_op_to_syntax_tree(t_syntax_tree **head, char *oper,
 			t_command *command);
 void		create_syntax_tree(t_syntax_tree **head, char *oper,

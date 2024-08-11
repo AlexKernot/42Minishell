@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:25:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/09 14:04:19 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 16:51:39 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ t_syntax_tree	*convert_postfix(t_token_list *tokens)
 		token = get_token(tokens, i);
 		if (is_redirect(token))
 			add_redirect(stack_front(c_stack), token,
-				get_token(tokens, i + 1));
+				get_token(tokens, i + 1), &i);
 		else
 			add_token(&syntax_tree, c_stack, o_stack, token);
 		++i;

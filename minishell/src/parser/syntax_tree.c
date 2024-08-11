@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 17:24:08 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/08 09:48:10 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 16:52:52 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 #include "libft.h"
 
-void	add_redirect(t_command *command, char *redir, char *file)
+void	add_redirect(t_command *command, char *redir, char *file, uint16_t *i)
 {
 	char	*redir_type;
 
@@ -39,6 +39,8 @@ void	add_redirect(t_command *command, char *redir, char *file)
 		redir_type[0] = '5';
 	push_token(command->redir_types, redir_type);
 	push_token(command->redirects, file);
+	if (i != NULL)
+		(*i)++;
 }
 
 void	delete_command(t_command *command)

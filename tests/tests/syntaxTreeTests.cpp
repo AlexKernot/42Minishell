@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 15:18:27 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/08 18:38:05 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 16:53:22 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,31 +79,31 @@ void syntaxTreeAddRedirect::test(int logFD) const
 	t_command *command = create_command(createStr("test"));
 	fassert(logFD, command != NULL);
 	char *string = createStr("File.txt");
-	add_redirect(NULL, NULL, NULL);
-	add_redirect(NULL, string, string);
-	add_redirect(command, NULL, string);
+	add_redirect(NULL, NULL, NULL, NULL);
+	add_redirect(NULL, string, string, NULL);
+	add_redirect(command, NULL, string, NULL);
 	fassert(logFD, command->redir_types->size == 0);
 	fassert(logFD, command->redirects->size == 0);
-	add_redirect(command, string, NULL);
+	add_redirect(command, string, NULL, NULL);
 	fassert(logFD, command->redir_types->size == 0);
 	fassert(logFD, command->redirects->size == 0);
 	free(string);
-	add_redirect(command, createStr("<"), createStr("file"));
+	add_redirect(command, createStr("<"), createStr("file"), NULL);
 	fassert(logFD, command->redir_types->size == 1);
 	fassert(logFD, command->redirects->size == 1);
 	fassert(logFD, std::string(command->redirects->array[0].content) == "file");
 	fassert(logFD, std::string(command->redir_types->array[0].content) == "1");
-	add_redirect(command, createStr("<<"), createStr("file2"));
+	add_redirect(command, createStr("<<"), createStr("file2"), NULL);
 	fassert(logFD, command->redir_types->size == 2);
 	fassert(logFD, command->redirects->size == 2);
 	fassert(logFD, std::string(command->redir_types->array[1].content) == "3");
 	fassert(logFD, std::string(command->redirects->array[1].content) == "file2");
-	add_redirect(command, createStr(">"), createStr("file3"));
+	add_redirect(command, createStr(">"), createStr("file3"), NULL);
 	fassert(logFD, command->redir_types->size == 3);
 	fassert(logFD, command->redirects->size == 3);
 	fassert(logFD, std::string(command->redir_types->array[2].content) == "2");
 	fassert(logFD, std::string(command->redirects->array[2].content) == "file3");
-	add_redirect(command, createStr(">>"), createStr("file4"));
+	add_redirect(command, createStr(">>"), createStr("file4"), NULL);
 	fassert(logFD, command->redir_types->size == 4);
 	fassert(logFD, command->redirects->size == 4);
 	fassert(logFD, std::string(command->redirects->array[3].content) == "file4");
