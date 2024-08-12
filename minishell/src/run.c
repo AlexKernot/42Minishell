@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 22:18:59 by akernot           #+#    #+#             */
-/*   Updated: 2024/02/02 00:29:55 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/12 15:01:27 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "segment.h"
 #include "run.h"
 #include "redirect.h"
+#include "syntax_tree.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +23,6 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/wait.h>
-#include <stdnoreturn.h>
 
 /** 
  * @author Alex Kernot
@@ -33,22 +33,19 @@
 */
 static t_bool	is_builtin(const char *str)
 {
-	const int	hash = hash_func(str);
-	const int	strlen = ft_strlen(str);
-
-	if (hash == echo && strlen == 4)
+	if (ft_strncmp("echo", str, 4) == 0)
 		return (true);
-	if (hash == pwd && strlen == 3)
+	if (ft_strncmp("pwd", str, 3) == 0)
 		return (true);
-	if (hash == export && strlen == 6)
+	if (ft_strncmp("export", str, 6) == 0)
 		return (true);
-	if (hash == cd && strlen == 2)
+	if (ft_strncmp("cd", str, 2) == 0)
 		return (true);
-	if (hash == unset && strlen == 5)
+	if (ft_strncmp("unset", str, 5) == 0)
 		return (true);
-	if (hash == env && strlen == 3)
+	if (ft_strncmp("env", str, 3) == 0)
 		return (true);
-	if (hash == eexit && strlen == 4)
+	if (ft_strncmp("exit", str, 4) == 0)
 		return (true);
 	return (false);
 }
@@ -79,7 +76,7 @@ static char	*construct_path(char *path, const char *file)
  * and checks if a file with the name of the command exists. If it does, it
  * executes that program through execve. If no file exists with 
 */
-static _Noreturn int	run_path(const char **substr)
+int	run_path(char **substr)
 {
 	const char	*path_env = getenv("PATH");
 	char		**paths;
@@ -119,19 +116,18 @@ static _Noreturn int	run_path(const char **substr)
  * as well as any information about redirects.
  * @return the exit status of the command that was run.
 */
-int	run_without_subshell(t_segment *segment)
+int	run_without_subshell(t_command *command)
 {
-	const char	*command = segment->command[0];
 	int			pid;
 	int			retval;
 
 	dup2(STDIN_FILENO, 15);
 	dup2(STDOUT_FILENO, 16);
-	if (redirect(segment) == 1)
+	if (redirect(command) == 1)
 		return (1);
-	if (is_builtin(command))
+	if (is_builtin(command->command))
 	{
-		retval = run_builtin((const char **)segment->command);
+		retval = run_builtin(command->args->array);
 		dup2(15, STDIN_FILENO);
 		dup2(16, STDOUT_FILENO);
 		return (retval);
@@ -144,7 +140,8 @@ int	run_without_subshell(t_segment *segment)
 	}
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
-	run_path((const char **)segment->command);
+	run_path(command->args->array);
+	exit(0);
 }
 
 /**
@@ -154,19 +151,20 @@ int	run_without_subshell(t_segment *segment)
  * @param segment the entire command to execute including expanded environment
  * variables and information about each redirect required.
 */
-_Noreturn void	run_command(t_segment *segment)
+void	run_command(t_command *command)
 {
-	const char	*command = segment->command[0];
+	const char	*cmd = command->command;
 
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
-	if (redirect(segment) == 1)
+	if (redirect(command) == 1)
 		exit(1);
-	if (command[0] == '/' || command[0] == '.' || command[0] == '~')
-		execute(command, (const char **)segment->command);
-	if (is_builtin(command))
-		exit(run_builtin((const char **)segment->command));
-	run_path((const char **)segment->command);
+	if (cmd[0] == '/' || cmd[0] == '.' || cmd[0] == '~')
+		execute(cmd, command->args->array);
+	if (is_builtin(command->command))
+		exit(run_builtin(command->args->array));
+	run_path(command->args->array);
+	exit(0);
 }
 
 /*

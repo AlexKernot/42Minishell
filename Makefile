@@ -6,13 +6,13 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/08/09 18:34:06 by akernot          ###   ########.fr        #
+#    Updated: 2024/08/11 16:54:37 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
 CXXFLAGS = -Wall -Wextra -fno-builtin -DDEBUG -g -I./minishell/includes -I./tests/ -I./tests/includes -I./minishell/libft -std=c++20
-LDFLAGS = -lreadline -fsanitize=address
+LDFLAGS = -lreadline
 
 OUTPUTDIR = ./bin
 

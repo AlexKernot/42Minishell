@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 17:50:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/21 15:58:39 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 19:47:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 t_token_list	*create_token_list(void)
 {
 	t_token_list	*list;
-	t_token		*array;
+	char		**array;
 
 	list = (t_token_list *)malloc(sizeof(*list));
 	if (list == NULL)
 		return (NULL);
-	array = (t_token *)malloc(sizeof(*array) * 10);
+	array = (char **)malloc(sizeof(*array) * 10);
 	if (array == NULL)
 	{
 		free(list);
@@ -36,10 +36,10 @@ t_token_list	*create_token_list(void)
 
 void		resize(t_token_list *token_list, uint16_t size)
 {
-	t_token	*new_array;
+	char	**new_array;
 	int		i;
 
-	new_array = (t_token *)malloc(sizeof(*new_array) * size);
+	new_array = (char **)malloc(sizeof(*new_array) * size);
 	if (new_array == NULL)
 		return ;
 	i = 0;
@@ -57,14 +57,15 @@ void		resize(t_token_list *token_list, uint16_t size)
 
 void	push_token(t_token_list *token_list, char *string)
 {
-	t_token		*array;
+	char		**array;
 	uint16_t	size;
 	
 	if (token_list->size + 1 >= token_list->capacity)
 		resize(token_list, token_list->capacity * 2);
 	array = token_list->array;
 	size = token_list->size;
-	array[size].content = string;
+	array[size] = string;
+	array[size + 1] = NULL;
 	token_list->size += 1;
 	return ;
 }
@@ -80,7 +81,7 @@ void		delete_token_list(t_token_list **token_list)
 		i = 0;
 		while (i < (*token_list)->size)
 		{
-			free((*token_list)->array[i].content);
+			free((*token_list)->array[i]);
 			++i;
 		}
 		free((*token_list)->array);
@@ -103,5 +104,5 @@ char	*get_token(const t_token_list *token_list, uint16_t index)
 		return (NULL);
 	if (index >= token_list->size)
 		return (NULL);
-	return (token_list->array[index].content);
+	return (token_list->array[index]);
 }

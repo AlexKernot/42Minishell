@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:53:26 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/21 16:58:08 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 18:35:18 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ typedef enum e_segment_type
 {
 	exec,
 	redir_in,
+	redir_delim,
 	redir_out,
 	redir_append,
-	redir_delim,
 	subshell
 }	t_segment_type;
 

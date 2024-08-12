@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:25:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 16:51:39 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 19:44:27 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,8 @@ void	add_token(t_syntax_tree **tree, t_stack *c_stack, t_stack *o_stack,
 
 	if (tree == NULL || c_stack == NULL || o_stack == NULL || token == NULL)
 		return ;
+	if (*tree == NULL && c_stack->data->size == 0 && o_stack->data->size == 0)
+		last_command = NULL;
 	if (is_operator(token))
 	{
 		add_operator(tree, c_stack, o_stack, token);

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 17:24:08 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 16:52:52 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/12 14:37:12 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ void	create_syntax_tree(t_syntax_tree **head, char *oper,
 	node->right = (t_syntax_tree *)malloc(sizeof(*node));
 	node->left = (t_syntax_tree *)malloc(sizeof(*node));
 	if (node->left != NULL)
-		add_command(node->left, command1);
+		add_command(node->right, command1);
 	if (node->right != NULL)
-		add_command(node->right, command2);
+		add_command(node->left, command2);
 }

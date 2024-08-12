@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 15:24:46 by akernot           #+#    #+#             */
-/*   Updated: 2024/02/02 00:27:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 19:36:32 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "redirect.h"
 #include "segment.h"
+#include "syntax_tree.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -109,28 +110,28 @@ static int	open_file(char *file, t_segment_type type)
  * duplicated, ready for reading.
  * @param segment the specific command to read redirect information from
 */
-int	redirect(t_segment	*segment)
+int	redirect(t_command *command)
 {
-	int				i;
-	int				fd;
+	int			i;
+	int			fd;
 	t_segment_type	type;
-	t_redirect		*index;
+	char		*file;
 
 	i = 0;
-	while (segment->redirects->array[i] != NULL)
+	while (i < command->redirects->size)
 	{
-		index = (t_redirect *)segment->redirects->array[i];
-		type = index->type;
-		fd = open_file(index->file_name, type);
+		file = command->redirects->array[i];
+		type = command->redir_types->array[i][0] - '0';
+		fd = open_file(file, type);
 		if (fd == -1)
 		{
 			write(2, "minishell: ", 12);
-			perror(index->file_name);
+			perror(file);
 			return (1);
 		}
 		if (type == redir_in || type == redir_delim)
 			dup2(fd, STDIN_FILENO);
-		else if (type == redir_out || redir_append == 3)
+		else if (type == redir_out || type == redir_append)
 			dup2(fd, STDOUT_FILENO);
 		++i;
 	}

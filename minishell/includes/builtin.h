@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:55:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/25 21:14:56 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 18:55:36 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,6 @@ int		builtin_unset(int ac, char *av[]);
 int		builtin_env(int ac, char *av[]);
 int		builtin_exit(int ac, char *av[]);
 
-int		run_builtin(const char **substr);
+int		run_builtin(char **substr);
 
 #endif

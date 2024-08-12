@@ -6,131 +6,48 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 23:17:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/05/01 16:48:36 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/12 14:56:59 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 
-#include "minishell.h"
-#include "segment.h"
+#include "tokenizer.h"
+#include "syntax_tree.h"
+#include "shunting_yard.h"
+#include "evaluator.h"
 #include "run.h"
-#include "environment_variables.h"
-#include "redirect.h"
-#include "builtin.h"
 
-#include "libft.h"
-
-/** 
- * @author Alex Kernot
- * STATIC:
- * defines catagories of characters so that the segment function can identify
- * where to split strings according to the capabilities of the shell.
-*/
-static t_char_type	catagorize(char a)
+static void print_tree(t_syntax_tree *tree, int level)
 {
-	if (ft_isprint(a) == false)
-		return (none);
-	if (a == ' ' || a == '	')
-		return (space);
-	if (a == '\'' || a == '\"')
-		return (quotation);
-	if (a == '<' || a == '>')
-		return (symbol);
-	return (character);
+	if (tree == NULL)
+		return ;
+	for (int i = 0; i < level; ++i)
+		write(STDOUT_FILENO, "-", 1);
+	if (tree->contents.type == op)
+		write(STDOUT_FILENO, tree->contents.contents.operator_word, ft_strlen(tree->contents.contents.operator_word));
+	else
+		write(STDOUT_FILENO, tree->contents.contents.command->command, ft_strlen(tree->contents.contents.command->command));
+	write(STDOUT_FILENO, "\n", 1);
+	print_tree(tree->right, level + 1);
+	print_tree(tree->left, level + 1);
 }
 
-/** 
- * @author Alex Kernot
- * STATIC:
- * splits the command returned from readline() into an array of single words
- * which are ready to be parsed into commands.
-*/
-static t_vector	*tokenizer(char *str)
+static int is_one_command(t_syntax_tree *tree)
 {
-	t_vector	*array;
-	t_char_type	current;
-	int			start;
-	int			i;
-
-	array = vector_ctor(25);
-	current = catagorize(str[0]);
-	i = 1;
-	start = 0;
-	while (str[i] != '\0')
-	{
-		if (current != catagorize(str[i]))
-		{
-			vector_push_back(array, ft_substr(str, start, i - start));
-			current = catagorize(str[i]);
-			start = i;
-		}
-		++i;
-	}
-	vector_push_back(array, ft_substr(str, start, i - start));
-	return (array);
-}
-
-/**
- * @author Alex Kernot
- * @deprecated should not be used anymore. This will happen in preproccess() now
-*/
-static t_vector	*process_symbols(t_vector	*split, int last_return)
-{
-	const t_vector	*processed = vector_ctor(25);
-	char			*dup;
-	char			tmp;
-	int				i;
-
-	i = 0;
-	while (i < split->size)
-	{
-		tmp = ((char *)vector_get(split, i))[0];
-		if (catagorize(tmp) == quotation)
-		{
-			i = handle_quotation(split, processed, i);
-			continue ;
-		}
-		if (ft_strchr((char *)vector_get(split, i), '$') != NULL)
-			vector_push_back((t_vector *)processed,
-				expand_env_vars((char *)vector_get(split, i), last_return));
-		else if (catagorize(tmp) != space)
-		{
-			dup = ft_strdup(vector_get(split, i));
-			vector_push_back((t_vector *)processed, dup);
-		}
-		++i;
-	}
-	return ((t_vector *)processed);
-}
-
-/** 
- * @author Alex Kernot
- * STATIC:
- * clears all the data in a segment array and frees all the memory
-*/
-static void	clear_segment(t_segment *array, int len)
-{
-	int		i;
-	int		j;
-	char	**in_array;
-
-	i = 0;
-	while (i < len)
-	{
-		in_array = array[i].command;
-		j = 0;
-		while (in_array[j] != NULL)
-		{
-			free(in_array[j]);
-			++j;
-		}
-		free(in_array);
-		vector_dtor(&array[i].redirects);
-		++i;
-	}
-	free (array);
+	if (tree == NULL)
+		return (0);
+	if (tree->contents.type != op)
+		return (0);
+	if (tree->contents.contents.operator_word[0] != '.'
+		|| tree->contents.contents.operator_word[1] != '\0')
+		return (0);
+	if (tree->right != NULL)
+		return (0);
+	if (tree->left->contents.type == command)
+		return (1);
+	return (0);
 }
 
 /**
@@ -142,23 +59,22 @@ static void	clear_segment(t_segment *array, int len)
 int	run(char *input)
 {
 	static int	last_return = 0;
-	t_vector	*split;
-	t_vector	*processed;
-	t_segment	*sub_commands;
-	int			num_sub_commands;
+	t_token_list	*tokens;
+	t_syntax_tree	*tree;
 
 	if (input == NULL || input[0] == '\0' || input[0] == '\n')
 		return (0);
-	split = tokenizer(input);
-	processed = process_symbols(split, last_return);
-	vector_dtor(&split);
-	sub_commands = segment((char **)processed->array);
-	num_sub_commands = segment_len(sub_commands);
-	if (num_sub_commands == 1)
-		last_return = run_without_subshell(sub_commands);
+	tokens = tokenize(input);
+	tree = convert_postfix(tokens);
+	free(tokens->array);
+	free(tokens);
+	//print_tree(tree, 0);
+	if (is_one_command(tree) == 1)
+		last_return = run_without_subshell
+			(tree->left->contents.contents.command);
 	else
-		last_return = create_subshells(sub_commands, num_sub_commands);
-	vector_dtor(&processed);
-	clear_segment(sub_commands, num_sub_commands);
+		last_return = evaluate_commands(tree,
+			STDIN_FILENO, STDOUT_FILENO);
+	delete_syntax_tree(&tree);
 	return (last_return);
 }

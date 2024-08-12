@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 20:16:15 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/03 23:17:44 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 19:46:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,5 @@ int	ft_pipe(int fds[2])
 	fds[READ_PIPE] = read_fd;
 	unlink(file_name);
 	free(file_name);
-	return (1);
+	return (0);
 }

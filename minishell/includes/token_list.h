@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 17:28:49 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/21 00:23:16 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 18:38:29 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_token
 
 typedef struct s_token_list
 {
-	t_token		*array;
+	char		**array;
 	uint16_t	size;
 	uint16_t	capacity;
 }	t_token_list;

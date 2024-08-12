@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 18:22:36 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/21 16:56:40 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/11 18:55:53 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void			start_interactive(void);
 char			*wait_for_input(const char *prompt);
 char			*generate_prompt(const char *combined);
 char			**vector_subset(t_vector *vec, int start, int end);
-_Noreturn void	execute(const char *command, const char *args[]);
+_Noreturn void	execute(const char *command, char *args[]);
 int				hash_func(char const *string);
 int				ft_arrlen(char **array);
 int				handle_quotation(const t_vector *split,
