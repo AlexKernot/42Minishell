@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_vars.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:23:55 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:44:25 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/16 18:57:53 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,4 +113,5 @@ void	clear_env_vars(void)
 		free(current);
 		current = next;
 	}
+	(*get_env_vars()) = NULL;
 }
