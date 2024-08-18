@@ -6,12 +6,12 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/08/11 16:54:37 by akernot          ###   ########.fr        #
+#    Updated: 2024/08/16 18:42:26 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CXXFLAGS = -Wall -Wextra -fno-builtin -DDEBUG -g -I./minishell/includes -I./tests/ -I./tests/includes -I./minishell/libft -std=c++20
+CXXFLAGS = -Wall -Wextra -DDEBUG -fno-builtin -g -I./minishell/includes -I./tests/ -I./tests/includes -I./minishell/libft -std=c++20
 LDFLAGS = -lreadline
 
 OUTPUTDIR = ./bin
@@ -19,7 +19,7 @@ OUTPUTDIR = ./bin
 TESTS = runTests.cpp fileTests.cpp individualTest.cpp addSymbolAndWordTest.cpp \
 tester.cpp copyStringTest.cpp extractStringTests.cpp getTypeTests.cpp \
 testerTest.cpp parseTests.cpp tokenListTests.cpp syntaxTreeTests.cpp \
-shuntingYardTests.cpp fakeMalloc.cpp
+shuntingYardTests.cpp fakeMalloc.cpp expandEnvVariableTest.cpp
 
 
 VPATH = ./tests/ ./tests/tests
