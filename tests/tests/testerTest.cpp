@@ -16,6 +16,7 @@
 #include <iostream>
 
 #include <fcntl.h>
+#include <sys/wait.h>
 
 extern "C" {
 	#include "ft_transmit.h"

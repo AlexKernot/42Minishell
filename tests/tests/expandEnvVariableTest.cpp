@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 18:08:18 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/16 19:38:40 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 17:43:19 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "test.hpp"
 
 #include <sstream>
+#include <cstring>
 
 extern "C" {
 	#include "expand.h"

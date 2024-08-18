@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 15:04:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/07 18:19:42 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 17:42:03 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 #include <sys/ioctl.h>
 

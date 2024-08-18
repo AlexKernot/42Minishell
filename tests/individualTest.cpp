@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 14:53:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/15 18:35:08 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 17:42:41 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <assert.h>
+#include <string.h>
 
 extern "C" {
 	#include "ft_transmit.h"
