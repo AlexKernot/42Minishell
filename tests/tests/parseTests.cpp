@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 21:15:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/05 18:22:22 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/15 18:32:51 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void transmitList(int logFD, const t_token_list *list, const std::vector<
 		return ;
 	}
 	for (int i = 0; i < list->size; ++i) {
-		strstr << list->array[i].content << " ";
+		strstr << list->array[i] << " ";
 	}
 	transmit(logFD, strstr.str().c_str());
 }

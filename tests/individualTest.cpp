@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 14:53:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/07 18:13:37 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/15 18:35:08 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ std::string individualTest::run(bool debug) const
 		return "";
 	}
 	int fds[2];
-	if (ft_pipe(fds) != 1)
+	if (ft_pipe(fds) != 0)
 	{
 		perror(testName.c_str());
 		abort();

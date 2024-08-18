@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 15:18:27 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 16:53:22 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/15 18:34:33 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ void syntaxTreeCreateAndDestroy::test(int logFD) const
 	fassert(logFD, result->redir_types != NULL);
 	fassert(logFD, result->redir_types->array != NULL);
 	fassert(logFD, result->redir_types->size == 0);
-	fassert(logFD, std::string(result->args->array[0].content) == "Test");
-	fassert(logFD, result->command != result->args->array[0].content);
+	fassert(logFD, std::string(result->args->array[0]) == "Test");
+	fassert(logFD, result->command != result->args->array[0]);
 	delete_command(result);
 	check_mem(logFD);
 
@@ -91,23 +91,23 @@ void syntaxTreeAddRedirect::test(int logFD) const
 	add_redirect(command, createStr("<"), createStr("file"), NULL);
 	fassert(logFD, command->redir_types->size == 1);
 	fassert(logFD, command->redirects->size == 1);
-	fassert(logFD, std::string(command->redirects->array[0].content) == "file");
-	fassert(logFD, std::string(command->redir_types->array[0].content) == "1");
+	fassert(logFD, std::string(command->redirects->array[0]) == "file");
+	fassert(logFD, std::string(command->redir_types->array[0]) == "1");
 	add_redirect(command, createStr("<<"), createStr("file2"), NULL);
 	fassert(logFD, command->redir_types->size == 2);
 	fassert(logFD, command->redirects->size == 2);
-	fassert(logFD, std::string(command->redir_types->array[1].content) == "3");
-	fassert(logFD, std::string(command->redirects->array[1].content) == "file2");
+	fassert(logFD, std::string(command->redir_types->array[1]) == "3");
+	fassert(logFD, std::string(command->redirects->array[1]) == "file2");
 	add_redirect(command, createStr(">"), createStr("file3"), NULL);
 	fassert(logFD, command->redir_types->size == 3);
 	fassert(logFD, command->redirects->size == 3);
-	fassert(logFD, std::string(command->redir_types->array[2].content) == "2");
-	fassert(logFD, std::string(command->redirects->array[2].content) == "file3");
+	fassert(logFD, std::string(command->redir_types->array[2]) == "2");
+	fassert(logFD, std::string(command->redirects->array[2]) == "file3");
 	add_redirect(command, createStr(">>"), createStr("file4"), NULL);
 	fassert(logFD, command->redir_types->size == 4);
 	fassert(logFD, command->redirects->size == 4);
-	fassert(logFD, std::string(command->redirects->array[3].content) == "file4");
-	fassert(logFD, std::string(command->redir_types->array[3].content) == "4");
+	fassert(logFD, std::string(command->redirects->array[3]) == "file4");
+	fassert(logFD, std::string(command->redir_types->array[3]) == "4");
 	
 	delete_command(command);
 	check_mem(logFD);
@@ -120,10 +120,10 @@ void syntaxTreeAddArg::test(int logFD) const
 	fassert(logFD, result != NULL);
 	add_arg(result, NULL);
 	fassert(logFD, result->args->size == 1);
-	fassert(logFD, std::string(result->args->array[0].content) == "command");
+	fassert(logFD, std::string(result->args->array[0]) == "command");
 	add_arg(result, createStr("1"));
 	fassert(logFD, result->args->size == 2);
-	fassert(logFD, std::string(result->args->array[1].content) == "1");
+	fassert(logFD, std::string(result->args->array[1]) == "1");
 	delete_command(result);
 	check_mem(logFD);
 
@@ -133,7 +133,7 @@ void syntaxTreeAddArg::test(int logFD) const
 	add_arg(result, createStr("1"));
 	fassert(logFD, result->args->size == 1);
 	fassert(logFD, std::string(result->command) == "1");
-	fassert(logFD, std::string(result->args->array[0].content) == "1");
+	fassert(logFD, std::string(result->args->array[0]) == "1");
 	delete_command(result);
 	free(result);
 	check_mem(logFD);

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 17:46:25 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/03 15:12:48 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/15 18:32:43 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static void transmitResult(int fd, std::string testName,
 	str << testName << ": Comparison failed.\n list { ";
 	for (uint16_t i = 0; i < list->size; ++i)
 	{
-		str << "\'" << list->array[i].content << "\' ";
+		str << "\'" << list->array[i] << "\' ";
 	}
 	str << "}\n vec  { ";
 	for (std::size_t i = 0; i < cmp.size(); ++i)

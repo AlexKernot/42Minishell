@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 14:09:48 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/08 18:35:54 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/15 18:34:00 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,24 +46,24 @@ void tokenListResizeTest::test(int logFD) const
 	push_token(list, word1);
 	push_token(list, word2);
 	push_token(list, word3);
-	const t_token *arr = list->array;
+	char **arr = list->array;
 	
 	resize(list, 15);
 	fassert(logFD, arr != list->array);
 	fassert(logFD, list->capacity == 15);
 	fassert(logFD, list->size == 3);
-	fassert(logFD, list->array[0].content == word1);
-	fassert(logFD, list->array[1].content == word2);
-	fassert(logFD, list->array[2].content == word3);
+	fassert(logFD, list->array[0] == word1);
+	fassert(logFD, list->array[1] == word2);
+	fassert(logFD, list->array[2] == word3);
 	
-	const t_token *arr2 = list->array;
+	char **arr2 = list->array;
 	resize(list, 1);
 	fassert(logFD, arr2 != list->array);
 	fassert(logFD, list->capacity == 1);
 	fassert(logFD, list->size == 1);
-	fassert(logFD, list->array[0].content == word1);
+	fassert(logFD, list->array[0] == word1);
 
-	const t_token *arr3 = list->array;
+	char **arr3 = list->array;
 	malloc_return_null();
 	resize(list, 2);
 	fassert(logFD, arr3 == list->array);
@@ -83,8 +83,8 @@ void tokenListPushTokenTest::test(int logFD) const
 	push_token(list, word1);
 	push_token(list, word2);
 	fassert(logFD, list->size == 2);
-	fassert(logFD, list->array[0].content == word1);
-	fassert(logFD, list->array[1].content == word2);
+	fassert(logFD, list->array[0] == word1);
+	fassert(logFD, list->array[1] == word2);
 
 	for (int i = 0; i < 10; ++i)
 	{

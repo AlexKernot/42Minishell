@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/08 18:34:57 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/15 19:19:46 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include "parseTests.hpp"
 #include "syntaxTreeTests.hpp"
 #include "shuntingYardTests.hpp"
+#include "expandEnvVariableTest.hpp"
 
 extern "C" {
 	#include "tokenizer.h"
@@ -47,7 +48,7 @@ void print_list(t_token_list *list, std::vector<std::string> cmp)
 	std::cout << "Comparing:\n{ ";
 	for (uint16_t i = 0; i < list->size; ++i)
 	{
-		std::cout << "\'" << list->array[i].content << "\' ";
+		std::cout << "\'" << list->array[i] << "\' ";
 	}
 	std::cout << "}\n{ ";
 	for (std::size_t i = 0; i < cmp.size(); ++i)
@@ -135,7 +136,8 @@ int main(int ac, char *av[])
 		new getTypeTests(),
 		new parseTestList(),
 		new syntaxTreeTestList(),
-		new shuntingYardTestList()
+		new shuntingYardTestList(),
+		new expandTestList()
 	});
 	tests.test(debug, test);
 	return 0;
