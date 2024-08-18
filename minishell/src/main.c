@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 17:34:03 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 18:41:06 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 14:16:29 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ static int	start_stream(void)
 	input = get_next_line(STDIN_FILENO);
 	while (input != NULL)
 	{
+		input[ft_strlen(input) - 1] = '\0';
+		fflush(stdout);
 		last_return = run(input);
 		free (input);
 		input = get_next_line(STDIN_FILENO);

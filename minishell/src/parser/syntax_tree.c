@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 17:24:08 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/12 14:37:12 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 18:21:20 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	add_redirect(t_command *command, char *redir, char *file, uint16_t *i)
 		redir_type[0] = '4';
 	else
 		redir_type[0] = '5';
+	free(redir);
 	push_token(command->redir_types, redir_type);
 	push_token(command->redirects, file);
 	if (i != NULL)

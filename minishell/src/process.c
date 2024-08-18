@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 23:17:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/17 18:35:35 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 18:01:27 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	run(char *input)
 	if (expanded == NULL)
 		expanded = input;
 	tokens = tokenize(expanded);
+	free(expanded);
 	tree = convert_postfix(tokens);
 	free(tokens->array);
 	free(tokens);

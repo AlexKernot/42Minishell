@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 14:29:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:44:57 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 17:39:22 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ static char	*expand_directory(char *path)
 int	builtin_cd(int ac, char *av[])
 {
 	char	*expanded_dir;
+	char	cwd[255];
 
 	if (ac == 1)
 	{
@@ -78,6 +79,9 @@ int	builtin_cd(int ac, char *av[])
 		free(expanded_dir);
 		return (1);
 	}
+	free(find_env_var("PWD")->val);
+	getcwd(cwd, 255);
+	find_env_var("PWD")->val = ft_strdup(cwd);
 	free(expanded_dir);
 	return (0);
 }
