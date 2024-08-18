@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 23:02:00 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/12 15:08:55 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 14:30:11 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	run_builtin(char **substr)
 		return (builtin_echo(ac, (char **)substr));
 	if (ft_strncmp("pwd", str, 3) == 0)
 		return (builtin_pwd(ac, (char **)substr));
-	if (ft_strncmp("hash", str, 4) == 0)
+	if (ft_strncmp("export", str, 6) == 0)
 		return (builtin_export(ac, (char **)substr));
 	if (ft_strncmp("unset", str, 5) == 0)
 		return (builtin_unset(ac, (char **)substr));

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 22:18:59 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/12 15:01:27 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 14:30:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "run.h"
 #include "redirect.h"
 #include "syntax_tree.h"
+#include "builtin.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +32,7 @@
  * the predefined hash values for each builtin. It also checks the length of the
  * command just in case of hash collisions.
 */
-static t_bool	is_builtin(const char *str)
+t_bool	is_builtin(const char *str)
 {
 	if (ft_strncmp("echo", str, 4) == 0)
 		return (true);

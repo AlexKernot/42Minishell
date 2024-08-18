@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 15:30:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/12 14:32:19 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/18 15:04:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #include "ft_pipe.h"
 #include "run.h"
 #include "environment_variables.h"
+#include "builtin.h"
 
 static int create_subshell(t_command *cmd, int in_fd, int out_fd)
 {
@@ -40,6 +42,8 @@ static int create_subshell(t_command *cmd, int in_fd, int out_fd)
 	dup2(out_fd, STDOUT_FILENO);
 	if (out_fd != STDOUT_FILENO)
 		close(out_fd);
+	if (is_builtin(cmd->command))
+		exit(run_builtin(cmd->args->array));
 	run_path(cmd->args->array);
 	perror("minishell: ");
 	exit(1);
