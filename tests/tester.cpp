@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 17:33:46 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/07 18:02:04 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/24 18:16:08 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ Tester::Tester(std::vector<fileTests *>&& tests)
 	malloc_init();
 }
 
-void Tester::test(bool debug, std::string testName)
+void Tester::test(bool debug, std::string testName, int testIndex)
 {
 	std::string errorList = "";
 	for (fileTests * test : testList)
 	{
-		const std::string errors = test->run(debug, testName);
+		const std::string errors = test->run(debug, testName, testIndex);
 		errorList.append(errors);
 		delete test;
 	}

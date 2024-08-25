@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 17:41:49 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/25 17:28:23 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #include "syntaxTreeTests.hpp"
 #include "shuntingYardTests.hpp"
 #include "expandEnvVariableTest.hpp"
+#include "splitTest.hpp"
 
 extern "C" {
 	#include "tokenizer.h"
@@ -113,19 +114,28 @@ static std::string lower(const std::string& str)
 
 int main(int ac, char *av[])
 {
-	if (ac > 3) {
+	if (ac > 4) {
 		std::cout << "Syntax: ./a.out [-d] [testName]\n";
 		return 1;
 	}
 	bool debug = false;
 	std::string test = "";
+	int testIndex = -1;
 	if (ac != 1) {
 		if (std::string(av[1]) == "d") {
 			debug = true;
 			if (av[2] != NULL)
 				test = std::string(av[2]);
+			if (av[3] != NULL)
+				testIndex = std::stoi(av[3]);
+			std::cout << "Debug " << test << " " << testIndex << std::endl;
 		} else
+		{
 			test = std::string(av[1]);
+			if (av[2] != NULL)
+				testIndex = std::stoi(av[2]);
+			std::cout << test << " " << testIndex << std::endl;
+		}
 	}
 	test = lower(test);
 	Tester tests({
@@ -133,6 +143,7 @@ int main(int ac, char *av[])
 		new addSymbolTestList(),
 		new addWordTestList(),
 		new copyStringTestList(),
+		new splitTestList(),
 		new extractStringTestList(),
 		new getTypeTests(),
 		new parseTestList(),
@@ -140,6 +151,6 @@ int main(int ac, char *av[])
 		new shuntingYardTestList(),
 		new expandTestList()
 	});
-	tests.test(debug, test);
+	tests.test(debug, test, testIndex);
 	return 0;
 }

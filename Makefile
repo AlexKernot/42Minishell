@@ -6,7 +6,7 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/08/16 18:42:26 by akernot          ###   ########.fr        #
+#    Updated: 2024/08/20 16:50:14 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ OUTPUTDIR = ./bin
 TESTS = runTests.cpp fileTests.cpp individualTest.cpp addSymbolAndWordTest.cpp \
 tester.cpp copyStringTest.cpp extractStringTests.cpp getTypeTests.cpp \
 testerTest.cpp parseTests.cpp tokenListTests.cpp syntaxTreeTests.cpp \
-shuntingYardTests.cpp fakeMalloc.cpp expandEnvVariableTest.cpp
+shuntingYardTests.cpp fakeMalloc.cpp expandEnvVariableTest.cpp splitTest.cpp
 
 
 VPATH = ./tests/ ./tests/tests

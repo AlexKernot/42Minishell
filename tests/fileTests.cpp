@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 15:04:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 17:42:03 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/24 18:13:00 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,16 @@ std::string fileTests::getTestName() const
 	return name;
 }
 
-std::string fileTests::run(bool debug, std::string testName) const
+static void execute(individualTest *test, std::string& result, bool debug)
+{
+	const std::string testResult = test->run(debug);
+	if (testResult.empty() == true)
+		return ;
+	result.append(testResult);
+	result.push_back('\n');
+}
+
+std::string fileTests::run(bool debug, std::string testName, int index) const
 {
 	write(STDOUT_FILENO, "[", 1);
 	write(STDOUT_FILENO, name.c_str(), strlen(name.c_str()));
@@ -68,32 +77,26 @@ std::string fileTests::run(bool debug, std::string testName) const
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &window);
 	const int resultsPerLine = std::max(window.ws_col - 40, 40);
 	int i = 0;
+	int testIndex = 0;
+	std::string testListName = lower(getTestName());
 	for (individualTest* test : testList)
 	{
-		if (testName == "" || lower(test->getTestName()) == testName
-			|| lower(getTestName()) == testName)
-		{
-			const std::string testResult = test->run(debug);
-			++i;
-			if (i >= resultsPerLine) {
-				write(STDOUT_FILENO, "\n", 1);
-				for (int j = 0; j < 40; ++j)
-					write(STDOUT_FILENO, " ", 1);
-				i = 0;
-			}
-			if (testResult.empty() == true)
-				continue;
-			results.append(testResult);
-			results.push_back('\n');
-		} else {
+		std::string nextTest = lower(test->getTestName());
+
+		if (testName == "" || testName == testListName)
+			execute(test, results, debug);
+		else if ((testName == nextTest || testListName == testName)
+			&& (index == testIndex || index == -1))
+			execute(test, results, debug);
+		else
 			write(STDOUT_FILENO, "_", 1);
-			++i;
-			if (i >= resultsPerLine) {
-				write(STDOUT_FILENO, "\n", 1);
-				for (int j = 0; j < 40; ++j)
-					write(STDOUT_FILENO, " ", 1);
-				i = 0;
-			}
+		++testIndex;
+		++i;
+		if (i >= resultsPerLine) {
+			write(STDOUT_FILENO, "\n", 1);
+			for (int j = 0; j < 40; ++j)
+				write(STDOUT_FILENO, " ", 1);
+			i = 0;
 		}
 		delete test;
 	}
