@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 15:18:27 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/15 18:34:33 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/25 19:25:46 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,12 +240,12 @@ void syntaxTreeAddCmd::test(int logFD) const
 	fassert(logFD, tree->left->left == NULL);
 	fassert(logFD, tree->left->right == NULL);
 	fassert(logFD, tree->left->contents.type == command);
-	fassert(logFD, std::string(tree->left->contents.contents.command->command) == "command1");
+	fassert(logFD, std::string(tree->left->contents.contents.command->command) == "command2");
 	fassert(logFD, tree->right != NULL);
 	fassert(logFD, tree->right->left == NULL);
 	fassert(logFD, tree->right->right == NULL);
 	fassert(logFD, tree->right->contents.type == command);
-	fassert(logFD, std::string(tree->right->contents.contents.command->command) == "command2");
+	fassert(logFD, std::string(tree->right->contents.contents.command->command) == "command1");
 
 	delete_syntax_tree(&tree);
 	check_mem(logFD);
