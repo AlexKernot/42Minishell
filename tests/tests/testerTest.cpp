@@ -48,7 +48,7 @@ std::string makeTestName(const std::string& testName, const std::string& area)
 void basicPipeTest::test(int logFD) const
 {
 	int fds[2];
-	if (ft_pipe(fds) != 1)
+	if (ft_pipe(fds) != 0)
 	{
 		perror(makeTestName(getTestName(), "ft_pipe()").c_str());
 		abort();
@@ -117,7 +117,7 @@ void forkPipeTest::test(int logFD) const
 	int pipeFDs[2];
 	const int writePipe = 1;
 	const int readPipe = 0;
-	if (ft_pipe(pipeFDs) != 1)
+	if (ft_pipe(pipeFDs) != 0)
 	{
 		perror("Test");
 		abort();
