@@ -6,11 +6,12 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 18:44:40 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/11 16:57:25 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/25 17:19:24 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "libft.h"
 #include "tokenizer.h"
@@ -18,11 +19,11 @@
 /**
  * 
  */
-enum e_char_classification get_char_type(const char a)
+enum e_char_classification	get_char_type(const char a)
 {
 	if (ft_isascii(a) == 0 || ft_isprint(a) == 0)
 		return (none_c);
-	if (a == '\'' || a == '\"' || a == ' ')
+	if (a == ' ')
 		return (none_c);
 	if (a == '&' || a == '|' || a == '>' || a == '<'
 		|| a == '(' || a == ')')
@@ -30,7 +31,7 @@ enum e_char_classification get_char_type(const char a)
 	return (letter_c);
 }
 
-enum e_symbols get_symbols(const char a)
+enum e_symbols	get_symbols(const char a)
 {
 	if (a == '<')
 		return (in_s);
@@ -43,25 +44,46 @@ enum e_symbols get_symbols(const char a)
 	if (a == '(' || a == ')')
 		return (bracket_s);
 	return (none_s);
-	
+}
+
+char	handle_quote(const char a, const char quote)
+{
+	if (a != '\'' && a != '\"')
+		return (quote);
+	if (quote == a)
+		return ('\0');
+	if (quote == '\0')
+		return (a);
+	return (quote);
 }
 
 /**
  * 
  */
 void	copy_string(const char *src, char *dest,
-		const uint16_t start, const uint16_t size)
+		uint16_t start, uint16_t size)
 {
 	uint16_t	i;
+	char		quote;
+	char		a;
 
-	if (src == NULL || dest == NULL)
+	if (src == NULL || dest == NULL || start >= ft_strlen(src))
 		return ;
-	if (start >= ft_strlen(src))
-		return ;
+	quote = '\0';
 	i = 0;
 	while (i < size && src[start + i] != '\0')
 	{
-		dest[i] = src[start + i];
+		a = src[start + i];
+		if (a == handle_quote(a, quote)
+			|| (a == quote && '\0' == handle_quote(a, quote)))
+		{
+			++start;
+			--size;
+			quote = handle_quote(a, quote);
+			continue ;
+		}
+		quote = handle_quote(a, quote);
+		dest[i] = a;
 		++i;
 	}
 	dest[i] = '\0';
@@ -87,40 +109,50 @@ char	*extract_string(const char *string,
 	return (extract_string);
 }
 
-void add_words(t_token_list *tokens, const char *string,
+void	add_words(t_token_list *tokens, const char *string,
 		const uint16_t start, const uint16_t end)
 {
-	int	i;
-	int	j;
-	
+	int		i;
+	int		j;
+	char	quote;
+
 	if (tokens == NULL || tokens->array == NULL || string == NULL)
 		return ;
 	i = start;
 	j = start;
+	quote = '\0';
+	//printf("\n");
 	while (i < end && string[i] != '\0')
- 	{
-		if (string[i] == ' ')
+	{
+		quote = handle_quote(string[i], quote);
+		//printf("%c[%c]", string[i], quote);
+		if (string[i] == ' ' && quote == '\0')
 		{
+			//printf("	Extracting '%s'\n", extract_string(string, j, i));
 			push_token(tokens, extract_string(string, j, i));
 			++i;
 			j = i;
-			continue;
+			continue ;
 		}
 		++i;
- 	}
+	}
 	if (j != i)
+	{
+		//printf("\n	Expected extraction: %d %d '%s'\n", j, i, ft_substr(string, j, i - j));
+		//printf("\n	Finishing Extraction '%s'\n", extract_string(string, j, i));
 		push_token(tokens, extract_string(string, j, i));
+	}
 }
 
 void	add_symbols(t_token_list *tokens, const char *string,
 		const uint16_t start, const uint16_t end)
 {
 	enum e_symbols	last_symbol;
-	uint16_t	i;
-	uint16_t	j;
+	uint16_t		i;
+	uint16_t		j;
 
 	if (tokens == NULL || string == NULL || string[0] == '\0')
-		return;
+		return ;
 	last_symbol = get_symbols(string[start]);
 	i = start;
 	j = i;
@@ -138,85 +170,85 @@ void	add_symbols(t_token_list *tokens, const char *string,
 		push_token(tokens, extract_string(string, j, i));
 }
 
-uint16_t split(t_token_list *token_list, const char *string, const uint16_t start,
-		t_char_class type)
+uint16_t	split(t_token_list *token_list, const char *string,
+	const uint16_t start, t_char_class type)
 {
 	const size_t	string_len = ft_strlen(string);
-	uint16_t 	i;
+	uint16_t		i;
+	char			quote;
 
+	quote = '\0';
 	if (token_list == NULL || token_list->array == NULL || string == NULL)
 		return (0);
-	i = start + 1;
+	i = start;
 	if (type == symbol_c && get_symbols(string[start]) == bracket_s)
 	{
-		add_symbols(token_list, string, start, i);
-		return (i);
+		add_symbols(token_list, string, start, i + 1);
+		return (i + 1);
 	}
 	while (i < string_len && string[i] != '\0'
-		&& get_char_type(string[i]) == (uint16_t)type)
+		&& (get_char_type(string[i]) == type
+			|| handle_quote(string[i], quote) != '\0'))
 	{
+		quote = handle_quote(string[i], quote);
 		++i;
 	}
-	if (type == none_c)
-		return (i);
-	else if (type == letter_c)
+	//printf("	Splitting at %d: '%s'. [%s] %s [%c]\n", i, &string[start], &string[i], type == letter_c ? "Letter" : "Symbol", quote);
+	if (type == letter_c)
 		add_words(token_list, string, start, i);
-	else
+	else if (type == symbol_c)
 		add_symbols(token_list, string, start, i);
 	return (i);
 }
 
-t_char_class merge_quotes(t_token_list *token_list, const char *string,
-		uint16_t *i, uint16_t *start)
+static int find_next_split(const char *str, int *strt)
 {
-	const uint16_t	string_len = ft_strlen(string);
-	const char	quote_type = string[*i];
+	uint16_t	i;
+	char		quote;
+	t_char_class	type;
+	int		start;
 
-	if (token_list == NULL || token_list->array == NULL || string == NULL)
-		return (none_c);
-	split(token_list, string, *start, get_char_type(string[*start]));
-	(*i)++;
-	*start = *i;
-	while (*i < string_len)
+	if (str[*strt] == '\0')
+		return (-1);
+	i = *strt;
+	while (str[i] == ' ')
+		++i;
+	*strt = i;
+	start = *strt;
+	quote = '\0';
+	type = get_char_type(str[*strt]);
+	while (i < ft_strlen(str))
 	{
-		if (string[*i] == quote_type)
+		quote = handle_quote(str[i], quote);
+		if (type != get_char_type(str[i]) && start != i
+			&& quote == '\0' && handle_quote(str[i], quote) == '\0')
 		{
-			push_token(token_list, extract_string(string, *start, *i));
-			(*i)++;
-			(*start) = *i;
-			return (get_char_type(string[*i]));
-		}
-		(*i)++;
-	}
-	return (none_c);
-}
-
-void	parse(t_token_list *token_list, const char *string)
-{
-	const size_t 			string_len = ft_strlen(string);
-	enum e_char_classification	type;
-	uint16_t			start;
-	uint16_t			i;
-
-	if (string == NULL || token_list == NULL || token_list->array == NULL)
-		return;
-	i = 0;
-	start = 0;
-	type = get_char_type(string[i]);
-	while (i < string_len)
-	{
-		if (string[i] == '\'' || string[i] == '\"')
-			type = merge_quotes(token_list, string, &i, &start);
-		if (type != get_char_type(string[i]) && start != i)
-		{
-			i = split(token_list, string, start, type);
-			type = get_char_type(string[i]);
-			start = i;
+			return (i);
 		}
 		++i;
 	}
-	if (start != i)
-		split(token_list, string, start, type);
+	return (i);
+}
+
+void	parse(t_token_list *token_list, const char *str)
+{
+	t_char_class	type;
+	int		start;
+	int 		index;
+
+	if (str == NULL || token_list == NULL || token_list->array == NULL)
+		return ;
+	start = 0;
+	while (1)
+	{
+		index = find_next_split(str, &start);
+		if (index == -1)
+			return ;
+		//printf("\nAbout to split %s, %d, %d, %s\n", &str[start], index, start, type == letter_c ? "Letter" : type == none_c ? "None" : "Symbol");
+		type = get_char_type(str[start]);
+		start = split(token_list, str, start, type);
+		//printf("	type %c %s\n", str[index], type == letter_c ? "Letter" : type == none_c ? "None" : "Symbol");
+	}
 }
 
 t_token_list	*tokenize(const char *string)

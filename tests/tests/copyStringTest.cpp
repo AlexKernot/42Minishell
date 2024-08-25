@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:44:08 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/03 15:54:31 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/25 17:21:39 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,8 @@
 
 extern "C" {
 	#include "ft_transmit.h"
+	#include "tokenizer.h"
 }
-
-extern "C" void	copy_string(const char *src, char *dest,
-				const uint16_t start, const uint16_t size);
 
 static void transmitResult(const char *dest, const std::string& cmp,
 	const uint16_t start, const uint16_t size, const int logFD)
@@ -31,18 +29,20 @@ static void transmitResult(const char *dest, const std::string& cmp,
 	std::string destStr = "(NULL)";
 	if (dest != NULL)
 		destStr = dest;
-
-	str << "copy_string() failed received " << destStr << " but expected "
-	<< cmp << "(" << start << "," << size << ")";
+	str << "copy_string() failed\nreceived: " << destStr << "\nexpected:";
+	if (cmp.empty())
+		str << "(NULL)";
+	else
+		str << cmp;
+	str << " (" << start << "," << size << ")\n";
 	transmit(logFD, str.str().c_str()); 
 }
 
-copyStringTest::copyStringTest(const char *src, char *dest,
+copyStringTest::copyStringTest(const char *src,
 	const uint16_t start, const uint16_t size, std::string cmp)
 	: individualTest("copy_string()")
 {
 	this->src = src;
-	this->dest = dest;
 	this->start = start;
 	this->size = size;
 	this->cmp = cmp;
@@ -50,10 +50,12 @@ copyStringTest::copyStringTest(const char *src, char *dest,
 
 void copyStringTest::test(int logFD) const
 {
+	char dest[25];
+	memset(dest, '@', sizeof(dest));
 	copy_string(src, dest, start, size);
-	if (dest == NULL && cmp == "")
+	if ((dest[0] == '\0' || dest[0] == '@') && cmp == "")
 		exit(0);
-	if (dest != NULL && dest == cmp)
+	if (dest == cmp)
 		exit(0);
 	transmitResult(dest, cmp, start, size, logFD);
 	exit(1);
@@ -65,13 +67,16 @@ copyStringTestList::copyStringTestList()
 	str = "Hello";
 	src = str.c_str();
 	
-	registerTest(new copyStringTest(NULL, dest, 0, 1, ""));
-	registerTest(new copyStringTest(src, NULL, 0, 1, ""));
-	registerTest(new copyStringTest(NULL, NULL, 0, 1, ""));
-	registerTest(new copyStringTest(src, dest, 0, 0, ""));
-	registerTest(new copyStringTest(src, dest, 0, 5, "Hello"));
-	registerTest(new copyStringTest(src, dest, 0, 1, "H"));
-	registerTest(new copyStringTest(src, dest, 5, 1, ""));
-	registerTest(new copyStringTest(src, dest, 38528, 1, ""));
-	registerTest(new copyStringTest(src, dest, 0, 38528, "Hello"));
+	registerTest(new copyStringTest(NULL, 0, 1, ""));
+	registerTest(new copyStringTest(NULL, 0, 1, ""));
+	registerTest(new copyStringTest(src, 0, 0, ""));
+	registerTest(new copyStringTest(src, 0, 5, "Hello"));
+	registerTest(new copyStringTest(src, 0, 1, "H"));
+	registerTest(new copyStringTest(src, 5, 1, ""));
+	registerTest(new copyStringTest(src, 38528, 1, ""));
+	registerTest(new copyStringTest(src, 0, 38528, "Hello"));
+	registerTest(new copyStringTest("Hello", 0, 5, "Hello"));
+	registerTest(new copyStringTest("Hello", 1, 4, "ello"));
+	registerTest(new copyStringTest("H\"e\"llo", 0, 7, "Hello"));
+	registerTest(new copyStringTest("H\"\'e\'\"llo", 0, 9, "H\'e\'llo"));
 }

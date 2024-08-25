@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 17:14:52 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/03 16:12:20 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/25 17:20:53 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,9 @@ extractStringTestList::extractStringTestList()
 	registerTest(new extractStringTest(src, 0, 5, "Hello"));
 	registerTest(new extractStringTest(src, 0, 100, "Hello"));
 	registerTest(new extractStringTest(src, 2, 5, "llo"));
+	registerTest(new extractStringTest("H\'e\'llo", 0, 7, "Hello"));
+	registerTest(new extractStringTest("H\'\"e\"\'llo", 0, 9, "H\"e\"llo"));
+	registerTest(new extractStringTest("H\"'e'\"llo", 0, 9, "H'e'llo"));
+	registerTest(new extractStringTest("H\'e\'\"l\"lo", 0, 10, "Hello"));
+	
 }

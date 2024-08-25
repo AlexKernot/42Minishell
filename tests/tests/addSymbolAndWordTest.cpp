@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 17:46:25 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/15 18:32:43 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/24 17:03:04 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,12 @@ addWordTestList::addWordTestList() : fileTests("addWordTest", {
 	new addWordTest(NULL, 0, 1, {}),
 	new addWordTest("Hello", 0, 6, {"Hello"}),
 	new addWordTest("$%&^Hello there how are you today!@#(", 4, 33, {"Hello", "there", "how", "are", "you", "today"}),
-	new addWordTest("No Trailing Space ", 0, 19, {"No", "Trailing", "Space"})
+	new addWordTest("Hello\"There\"", 0, 13, {"HelloThere"}),
+	new addWordTest("Hello\"'There'\"Hiii", 0, 19, {"Hello'There'Hiii"}),
+	new addWordTest("Hello\"There", 0, 12, {"HelloThere"}),
+	new addWordTest("No Trailing Space ", 0, 19, {"No", "Trailing", "Space"}),
+	new addWordTest("\"This 'Needs' to be combined\"", 0, 30, {"This 'Needs' to be combined"}),
+	new addWordTest("'This \"Needs\" to be combined'", 0, 30, {"This \"Needs\" to be combined"})
 })
 {
 	// No extra code needed

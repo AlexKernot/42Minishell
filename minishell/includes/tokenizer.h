@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 15:18:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/21 00:17:53 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/20 16:42:39 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,5 +122,8 @@ void			parse(t_token_list *token_list, const char *string);
  * @param a the character to categorize
  */
 t_symbols		get_symbols(const char a);
+
+uint16_t		split(t_token_list *token_list, const char *string,
+				const uint16_t start, t_char_class type);
 
 #endif

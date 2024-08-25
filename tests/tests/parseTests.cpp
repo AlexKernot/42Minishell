@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 21:15:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/15 18:32:51 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/20 14:15:02 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,27 +24,28 @@ static void transmitList(int logFD, const t_token_list *list, const std::vector<
 {
 	std::stringstream strstr;
 
-	strstr << "parse() test comparison failed. Expected: ";
-	if (cmp.empty() == false) {
+	strstr << "parse() test comparison failed.\nexpected: ";
+	if (cmp.empty() == true) {
 		strstr << "(NULL) ";
 	}
 	for (const std::string& str : cmp) {
-		strstr << str << " ";
+		strstr << str << ", ";
 	} 
-	strstr << "received: ";
+	strstr << "\nreceived: ";
 	if (list == NULL) {
 		strstr << "(NULL)";
 		transmit(logFD, strstr.str().c_str());
 		return ;
 	}
 	for (int i = 0; i < list->size; ++i) {
-		strstr << list->array[i] << " ";
+		strstr << list->array[i] << ", ";
 	}
+	strstr << "\n";
 	transmit(logFD, strstr.str().c_str());
 }
 
 parseTest::parseTest(const char *string, std::vector<std::string> cmp)
-	: individualTest("parse()"), string(string), cmp(cmp) 
+	: individualTest("parseTest"), string(string), cmp(cmp) 
 	{	}
 
 void parseTest::test(int logFD) const
@@ -71,10 +72,12 @@ parseTestList::parseTestList()
 		new parseTest("\'This needs to be one string\'", {"This needs to be one string"}),
 		new parseTest("\"This 'needs' to be one string\"", {"This 'needs' to be one string"}),
 		new parseTest("\'This \"needs\" to be one string\'", {"This \"needs\" to be one string"}),
-		new parseTest("stuff<a.out\'This \"needs\" to be one string\'yess", {"stuff", "<", "a.out", "This \"needs\" to be one string", "yess"}),
+		new parseTest("stuff<a.out\'This \"needs\" to be one string\'yess", {"stuff", "<", "a.outThis \"needs\" to be one stringyess"}),
 		new parseTest("stuff<a.out \'This \"needs\" to be one string\' yess", {"stuff", "<", "a.out", "This \"needs\" to be one string", "yess"}),
 		new parseTest("brackets! (abc) bye", {"brackets!", "(", "abc", ")", "bye"}),
 		new parseTest("no combining () ?", {"no", "combining", "(", ")", "?"}),
-		new parseTest("no combining++ ((hi)bye) ?", {"no", "combining++", "(", "(", "hi", ")", "bye", ")", "?"})
+		new parseTest("no combining++ ((hi)bye) ?", {"no", "combining++", "(", "(", "hi", ")", "bye", ")", "?"}),
+		new parseTest("These\"NEED\"to\'be\'combined", {"TheseNEEDtobecombined"}),
+		new parseTest("Testing\"St'r'ange\"\'Beha\"v\"iour\'Hmmmm", {"TestingSt'r'angeBeha\"v\"iourHmmmm"})
 	})
 	{	}

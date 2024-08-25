@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 22:55:22 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/04 21:05:52 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/20 16:30:44 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ getTypeTests::getTypeTests()
 
 	for (int i = -128; i < 128; ++i) {
 		char a = (char)i;
-		if (isprint(a) == false || isascii(a) == false || a == ' ' || a == '\'' || a == '\"')
+		if (isprint(a) == false || isascii(a) == false || a == ' ')
 			registerTest(new getWordTest(a, none_c));
 		else if (a == '<' || a == '>' || a == '|' || a == '&' || a == '(' || a == ')')
 			registerTest(new getWordTest(a, symbol_c));
