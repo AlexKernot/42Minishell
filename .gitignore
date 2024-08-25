@@ -55,3 +55,4 @@ bin/
 .vscode/c_cpp_properties.json
 *.json
 minishell/minishell
+/minishell/minishell_tester

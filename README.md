@@ -48,8 +48,11 @@ To run this program, use the following syntax:
 
 If the program isn't run in an interactive shell, neither the splash screen nor the prompt will be displayed, and the program will execute each command line by line.
 
+## Tester
 
-<img width="1270" alt="Screenshot 2024-08-06 at 12 45 35 PM" src="https://github.com/user-attachments/assets/49a8184f-271e-4991-9007-4241eef8b1c4">
+For this project I made a custom class structure to make unit testing easier to visualize and debug. 
+
+Below is an example of how the tester looks with memory leaks, crashes, and regular failed tests
 
 <img width="1270" alt="Screenshot 2024-08-06 at 12 45 20 PM" src="https://github.com/user-attachments/assets/d9edc2c0-5d0e-4019-aa6c-f7504decc68d">
 
