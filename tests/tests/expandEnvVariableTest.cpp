@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 18:08:18 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 17:43:19 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/31 15:11:14 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static void print(int logFD, const std::string name, const char *result,
 	std::string resultStr = sanitizeFormat(result);
 	std::stringstream str;
 	str << name << ": Comparison failed.\n"
-		<< "input:    '" << string << "\n"
+		<< "input:    '" << string << "'\n"
 		<< "expected: '" << cmp << "'\n"
 		<< "received: '" << resultStr << "'\n";
 	transmit(logFD, str.str().c_str());
@@ -60,7 +60,7 @@ static void print(int logFD, const std::string name, const char *result,
 
 void findDollarSignTest::test(int logFD) const
 {
-	int result = find_dollar_symbol(str);
+	int result = find_dollar_symbol(str, pos);
 	if (result != expected)
 	{
 		std::stringstream str;
@@ -115,9 +115,8 @@ void envVarTest::test(int logFD) const
 void expandStringTest::test(int logFD) const
 {
 	setup_env_vars();
-	int i = 0;
 	int last_return = 0;
-	char *result = expand_str(str, NULL, &i, last_return);
+	char *result = expand_str(str, NULL, start, last_return);
 	if ((result == NULL && expected.empty() == false)
 		|| (result != NULL && result != expected))
 	{
@@ -150,6 +149,21 @@ void expandTest::test(int logFD) const
 	check_mem(logFD);
 }
 
+
+void extractEnvVarTest::test(int logFD) const
+{
+	setup_env_vars();
+	char *result = extract_env_var(str, start, end, 0);
+	if ((result == NULL && expected != "") || (result != expected))
+	{
+		print(logFD, getTestName(), result, str, expected);
+		exit(1);
+	}
+	free(result);
+	clear_env_vars();
+	check_mem(logFD);
+}
+
 expandTestList::expandTestList()
 : fileTests("expandEnvironmentVariableTests",
 {
@@ -160,43 +174,63 @@ expandTestList::expandTestList()
 	new strnjoinTest("a", "b", 10, "ab"),
 	new strnjoinTest("Hello ", "World", 5, "Hello World"),
 	new strnjoinTest("Hello ", "Worlds that don't exist", 5, "Hello World"),
-	new findDollarSignTest("", -1),
-	new findDollarSignTest(NULL, -1),
-	new findDollarSignTest(" ", -1),
-	new findDollarSignTest("HELLO WORLD", -1),
-	new findDollarSignTest("$", 0),
-	new findDollarSignTest("\"$\"", 1),
-	new findDollarSignTest("'$'", -1),
-	new findDollarSignTest("'\"$'\"", -1),
-	new findDollarSignTest("\"'$'\"", 2),
-	new findDollarSignTest("\'a\'$", 3),
-	new findDollarSignTest("$$$$", 0),
-	new expandStringTest(NULL, ""),
-	new expandStringTest("$HELLO", "Hello"),
-	new expandStringTest("$WORLD", "World"),
-	new expandStringTest("$HELLO$WORLD", "Hello"),
-	new expandStringTest("$?", "0"),
-	new expandStringTest("$?$HELLO", "0"),
-	new expandStringTest("$HELLO Hihihiihi", "Hello"),
-	new expandStringTest("$NOVAL", ""),
+	new findDollarSignTest("", 0, -1),
+	new findDollarSignTest(NULL, 0, -1),
+	new findDollarSignTest(" ", 0, -1),
+	new findDollarSignTest("HELLO WORLD", 0, -1),
+	new findDollarSignTest("$", 0, 0),
+	new findDollarSignTest("\"$\"", 0, 1),
+	new findDollarSignTest("'$'", 0, -1),
+	new findDollarSignTest("'\"$'\"", 0, -1),
+	new findDollarSignTest("\"'$'\"", 0, 2),
+	new findDollarSignTest("\'a\'$", 0, 3),
+	new findDollarSignTest("$$ Gogogo", 2, -1),
+	new findDollarSignTest("$$$$", 0, 0),
+	new expandStringTest(NULL, 0, ""),
+	new extractEnvVarTest("", 0, 0, ""),
+	new extractEnvVarTest("$HELLO", 0, 0, "$"),
+	new extractEnvVarTest("$HELLO", 0, 5, "Hello"),
+	new extractEnvVarTest("$HELLO ", 0, 5, "Hello"),
+	new extractEnvVarTest("$HELLO", 0, 6, "Hello"),
+	new extractEnvVarTest("$NOVAL", 0, 6, ""),
+	new extractEnvVarTest("$?", 0, 1, "0"),
+	new extractEnvVarTest("$?", 0, 2, "0"),
+	new expandStringTest("$HELLO", 0, "Hello"),
+	new expandStringTest("$WORLD", 0, "World"),
+	new expandStringTest("$HELLO ", 0, "Hello"),
+	new expandStringTest("$?$HELLO", 0, "0"),
+	new expandStringTest("$HELLO Hihihiihi", 0, "Hello"),
+	new expandStringTest("$NOVAL", 0, ""),
 	new expandTest("", ""),
 	new expandTest("$HELLO", "Hello"),
-	new expandTest("$", ""),
-	new expandTest("$$", ""),
+	new expandTest("$", "$"),
+	new expandTest("$$", "$$"),
 	new expandTest("$NOENV", ""),
 	new expandTest("$?", "0", 0),
 	new expandTest("$?", "18", 18),
+	new expandTest("$HELLO$WORLD", "HelloWorld"),
+	new expandTest("$?", "0"),
 	new expandTest("$HELLO $WORLD", "Hello World"),
 	new expandTest("$HELLO $?", "Hello 14", 14),
-	new expandTest("$HELLO $HELLO $HELLO", "Hello Hello Hello"),
+	new expandTest("$HELLO>$WORLD", "Hello>World"),
+	new expandTest("$HELLO$WORLD$HELLO$WORLD", "HelloWorldHelloWorld"),
+	new expandTest("$HELLO>$WORLD>$HELLO>$WORLD", "Hello>World>Hello>World"),
+	new expandTest("$HELLO $WORLD", "Hello World"),
+	new expandTest("$HELLO $WORLD $HELLO", "Hello World Hello"),
+	new expandTest("$HELLO $WORLD Hii", "Hello World Hii"),
+	new expandTest("$HELLO $WORLD Hii $HELLO", "Hello World Hii Hello"),
+	new expandTest("$HELLO $WORLD $HELLO $HELLO", "Hello World Hello Hello"),
+	new expandTest("$HELLO $WORLD $HELLO $WORLD $HELLO", "Hello World Hello World Hello"),
 	new expandTest("$HELLO$WORLD", "HelloWorld"),
 	new expandTest("$HELLO$?", "Hello9", 9),
-	new expandTest("\"Woooooo $HELLO wooooo\"", "\"Woooooo Hello wooooo\""),
-	new expandTest("\'$HELLO $WORLD\'", "\'$HELLO $WORLD\'"),
-	new expandTest("$HELLO \'$HELLO\' \"$HELLO\" $HELLO", "Hello \'$HELLO\' \"Hello\" Hello"),
-	new expandTest("\'\"$HELLO\"\'", "\'\"$HELLO\"\'"),
-	new expandTest("\"\'$HELLO\'\"", "\"\'Hello\'\""),
-	new expandTest("\' Hiii \"$HELLO\"\'", "\' Hiii \"$HELLO\"\'"),
-	new expandTest("\" Hiii \'$HELLO\'\"", "\' Hiii \"Hello\"\'")
+	new expandTest("\"$WORLD\"", "World"),
+	new expandTest("\"Woooooo $HELLO wooooo\"", "Woooooo Hello wooooo"),
+	new expandTest("\'$HELLO $WORLD\'", "$HELLO $WORLD"),
+	new expandTest("$HELLO \'$HELLO\' \"$HELLO\" $HELLO", "Hello $HELLO Hello Hello"),
+	new expandTest("\'\"$HELLO\"\'", "\"$HELLO\""),
+	new expandTest("\"\'$HELLO\'\"", "\'Hello\'"),
+	new expandTest("\' Hiii \"$HELLO\"\'", " Hiii \"$HELLO\""),
+	new expandTest("\" Hiii \'$HELLO\'\"", " Hiii \'Hello\'"),
+	new expandTest("\"\'a\'\"", "\'a\'")
 })
 {	}

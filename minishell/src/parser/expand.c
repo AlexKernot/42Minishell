@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:01:32 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/17 18:31:47 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/29 23:08:41 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,53 +49,20 @@ char	*ft_strnjoin(const char *str1, const char *str2, int max_size)
 	return (str);
 }
 
-/**
- * @brief Allocates a string to hold `result`, then copies at most `size` bytes
- * from `str`. Finally, if 
- */
-char	*extract_and_join(const char *str, const char *result,
-	const size_t size, const int last_return)
+int	find_dollar_symbol(const char *str, size_t start)
 {
-	char	env_str[2048];
-	char	*env_var;
-	char	*retval;
-
-	if (size == 0)
-		return (NULL);
-	ft_memcpy(env_str, str, size);
-	env_str[size] = '\0';
-	if (env_str[0] == '?' && env_str[1] == '\0')
-	{
-		env_var = ft_itoa(last_return);
-		retval = ft_strjoin(result, env_var);
-		assert(retval != NULL);
-		free(env_var);
-	}
-	else
-	{
-		env_var = ft_getenv(env_str);
-		if (env_var == NULL)
-			env_var = "";
-		retval = ft_strjoin(result, env_var);
-		assert(retval != NULL);
-	}
-	return (retval);
-}
-
-int	find_dollar_symbol(const char *str)
-{
-	int	i;
+	size_t	i;
 	char	last_quote;
 	char	current;
 
 	if (str == NULL)
 		return (-1);
 	last_quote = '\0';
-	i = 0;
-	while (str[i] != '\0')
+	i = start;
+	while (i < ft_strlen(str))
 	{
 		current = str[i];
-		if (current == '\'' || current == '"')
+		if (current == '\'' || current == '\"')
 		{
 			if (current == last_quote)
 				last_quote = '\0';
@@ -109,34 +76,93 @@ int	find_dollar_symbol(const char *str)
 	return (-1);
 }
 
-char	*expand_str(const char *str, const char *result, int *total,
-		const int last_return)
+int	get_delimator(const char *str, const int start)
 {
-	int		next;
-	int		start;
-	char		a;
-	char		*retval;
-	char		*temp;
+	int	i;
+	char	a;
 
-	if (str == NULL || total == NULL)
-		return (NULL);
-	start = find_dollar_symbol(str) + 1;
-	next = start;
-	while (1)
+	i = start;
+	while (str[i] != '\0')
 	{
-		a = str[next];
+		a = str[i];
 		if (a == ' ' || a == '|' || a == '<' || a == '>' || a == '\''
-			|| a == '\"' || a == '\0' || a == '$')
-		{
-			temp = ft_strnjoin(result, str, start - 1);
-			retval = extract_and_join(&str[start], temp,
-				next - 1, last_return);
-			free(temp);
-			(*total) += next;
-			return(retval);
-		}
-		++next;
+			|| a == '\"' || a == '$')
+			return (i);
+		++i;
 	}
+	return (i);
+}
+
+char	*ft_strndup(const char *str, const size_t n)
+{
+	char	*new_string;
+	size_t	i;
+	size_t	size;
+
+	i = 0;
+	if (*str == 0)
+		return (ft_calloc(1, 1));
+	size = ft_strlen(str);
+	new_string = (char *)malloc(size * sizeof(char) + 1);
+	if (new_string == NULL || size < 1)
+		return (NULL);
+	while (i < size && str[i] != 0 && i < n)
+	{
+		new_string[i] = str[i];
+		i++;
+	}
+	new_string[i] = 0;
+	return (new_string);
+}
+
+char	*extract_env_var(const char *str, const size_t start,
+				const size_t end, const int last_return)
+{
+	char		*retval;
+	char		*to_expand;
+	char		*env;
+	uint16_t	pos;
+
+	pos = start;
+	if (str == NULL)
+		return (NULL);
+	if (str[start] == '$' && end == start)
+		return (ft_strdup("$"));
+	if (str[start] == '$')
+		++pos;
+	to_expand = ft_strndup(&str[pos], end - pos + 1);
+	if (to_expand[0] == '?' && to_expand[1] == '\0')
+	{
+		free(to_expand);
+		return (ft_itoa(last_return));
+	}
+	env = ft_getenv(to_expand);
+	if (env == NULL)
+		return (ft_strdup(""));
+	retval = ft_strdup(env);
+	free(to_expand);
+	return retval;
+}
+
+char	*expand_str(const char *str, const char *result,
+			const size_t start, const int last_rtn)
+{
+	size_t	symbol_pos;
+	int	delim_pos;
+	char	*retval;
+	char	*temp;
+	char	*temp2;
+
+	if (str == NULL)
+		return (NULL);
+	symbol_pos = find_dollar_symbol(str, start);
+	delim_pos = get_delimator(str, symbol_pos + 1);
+	temp = ft_strnjoin(result, &str[start], symbol_pos - start);
+	temp2 = extract_env_var(str, symbol_pos, delim_pos - 1, last_rtn);
+	retval = ft_strjoin(temp, temp2);
+	free(temp);
+	free(temp2);
+	return (retval);
 }
 
 char	*expand(const char *str, const int last_return)
@@ -149,17 +175,16 @@ char	*expand(const char *str, const int last_return)
 	total = 0;
 	next = 0;
 	result = NULL;
-	while (1)
+	while (total < (int)ft_strlen(str))
 	{
-		next = find_dollar_symbol(&str[total]);
+		next = find_dollar_symbol(str, total);
 		if (next == -1)
 			break;
-		temp = expand_str(&str[total], result, &next,
-			last_return);
-		total += next;
+		temp = expand_str(str, result, total, last_return);
 		if (result != NULL)
 			free(result);
 		result = temp;
+		total = get_delimator(str, next + 1);
 	}
 	if (total >= (int)ft_strlen(str))
 		return (result);

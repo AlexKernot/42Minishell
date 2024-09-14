@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:23:55 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/16 18:57:53 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/30 22:00:10 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "environment_variables.h"
 
 #include <stdlib.h>
+#include <unistd.h>
 
 /**
  * @author Prachi Chawda
@@ -29,11 +30,26 @@
 */
 t_env_vars	**get_env_vars(void)
 {
-	static t_env_vars	*vars;
+	static t_env_vars	*vars = NULL;
 
-	if (vars == NULL)
-		vars = ft_calloc(1, sizeof(*vars));
 	return (&vars);
+}
+
+t_env_vars	*make_env_var(t_env_vars *current, char *name, char *value)
+{
+	t_env_vars	*new;
+
+	new = ft_calloc(1, sizeof(*current));
+	if (new == NULL)
+		return (new);
+	if (current == NULL)
+		*get_env_vars() = new;
+	else
+		current->next = new;
+	new->name = name;
+	new->val = value;
+	new->next = NULL;
+	return (new);
 }
 
 /**
@@ -46,23 +62,30 @@ t_env_vars	**get_env_vars(void)
 void	init_env_vars(char *const envp[])
 {
 	t_env_vars	*current;
+	t_env_vars	*pwd;
+	char			cwd[128];
 	int			i;
 	int			size;
 
 	current = *get_env_vars();
 	i = 0;
-	while (1)
+	while (i < ft_arrlen((char **)envp))
 	{
 		size = find_equal_sign(envp[i]);
-		current->name = ft_substr(envp[i], 0, size);
-		current->val = ft_substr(envp[i], size + 1, ft_strlen(envp[i]) - size);
+		current = make_env_var(current, ft_substr(envp[i], 0, size),
+			ft_substr(envp[i], size + 1, ft_strlen(envp[i]) - size)
+		);
 		++i;
-		if (i >= ft_arrlen((char **)envp))
-			break ;
-		current->next = ft_calloc(1, sizeof(*current));
-		current = current->next;
 	}
-	current->next = NULL;
+	pwd = find_env_var("PWD");
+	getcwd(cwd, sizeof(cwd));
+	if (pwd == NULL)
+		make_env_var(current, ft_strdup("PWD"), ft_strdup(cwd));
+	else
+	{
+		free(pwd->val);
+		pwd->val = ft_strdup(cwd);
+	}
 }
 
 /**

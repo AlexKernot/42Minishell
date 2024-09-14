@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 18:03:12 by akernot           #+#    #+#             */
-/*   Updated: 2023/06/15 18:03:03 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/31 14:28:29 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	ft_atoi(const char *nptr)
 	int		i;
 
 	converted = 0;
+	negative = 0;
 	i = skip_whitespace(nptr);
 	if (nptr[i] == '+')
 		i++;
