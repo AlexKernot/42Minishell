@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 21:15:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/20 14:15:02 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:39:53 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,10 @@ parseTestList::parseTestList()
 		new parseTest("no combining () ?", {"no", "combining", "(", ")", "?"}),
 		new parseTest("no combining++ ((hi)bye) ?", {"no", "combining++", "(", "(", "hi", ")", "bye", ")", "?"}),
 		new parseTest("These\"NEED\"to\'be\'combined", {"TheseNEEDtobecombined"}),
-		new parseTest("Testing\"St'r'ange\"\'Beha\"v\"iour\'Hmmmm", {"TestingSt'r'angeBeha\"v\"iourHmmmm"})
+		new parseTest("Testing\"St'r'ange\"\'Beha\"v\"iour\'Hmmmm", {"TestingSt'r'angeBeha\"v\"iourHmmmm"}),
+		new parseTest("echo <\"Hello Hey There\" \"Hello Hey There\"", {"echo", "<", "Hello Hey There", "Hello Hey There"}),
+		new parseTest("\"Hello     Hello\"", {"Hello     Hello"}),
+		new parseTest("echo <\"../hello/\" \"Hello     Hello\"", {"echo", "<", "../hello/", "Hello     Hello"}),
+		new parseTest("ls >\"./outfiles/outfile\"\"1\"\"2\"\"3\"\"4\"\"5\"", {"ls", ">", "./outfiles/outfile12345"})
 	})
 	{	}

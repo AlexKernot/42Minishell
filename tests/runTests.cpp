@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/25 17:28:23 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 17:56:53 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 #include "shuntingYardTests.hpp"
 #include "expandEnvVariableTest.hpp"
 #include "splitTest.hpp"
+#include "IntegrationTests.hpp"
+#include "ComplexIntegrationTest.hpp"
 
 extern "C" {
 	#include "tokenizer.h"
@@ -112,6 +114,39 @@ static std::string lower(const std::string& str)
 	return retval;
 }
 
+static Tester *createTests()
+{
+	std::vector<fileTests *> testList = {
+		new testerTestList(),
+		new addSymbolTestList(),
+		new addWordTestList(),
+		new copyStringTestList(),
+		new splitTestList(),
+		new extractStringTestList(),
+		new getTypeTests(),
+		new parseTestList(),
+		new syntaxTreeTestList(),
+		new shuntingYardTestList(),
+		new expandTestList()
+	};
+	const std::string testFileList[] = {
+		"builtins",
+		"pipes",
+		"redirects",
+		"extras",
+		"os_specific"
+	};
+	for (const std::string& test : testFileList)
+	{
+		IntegrationTest *integrationTest = new IntegrationTest(test);
+		testList.push_back(integrationTest);
+	}
+	testList.push_back(new ComplexIntegrationTest());
+	testList.push_back(new HeredocIntegrationTest());
+	Tester *tester = new Tester(std::move(testList));
+	return tester;
+}
+
 int main(int ac, char *av[])
 {
 	if (ac > 4) {
@@ -138,19 +173,9 @@ int main(int ac, char *av[])
 		}
 	}
 	test = lower(test);
-	Tester tests({
-		new testerTestList(),
-		new addSymbolTestList(),
-		new addWordTestList(),
-		new copyStringTestList(),
-		new splitTestList(),
-		new extractStringTestList(),
-		new getTypeTests(),
-		new parseTestList(),
-		new syntaxTreeTestList(),
-		new shuntingYardTestList(),
-		new expandTestList()
-	});
-	tests.test(debug, test, testIndex);
+	
+	Tester *tester = createTests();
+	tester->test(debug, test, testIndex);
+	delete tester;
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 18:08:18 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/31 15:11:14 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:44:40 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,14 +223,14 @@ expandTestList::expandTestList()
 	new expandTest("$HELLO $WORLD $HELLO $WORLD $HELLO", "Hello World Hello World Hello"),
 	new expandTest("$HELLO$WORLD", "HelloWorld"),
 	new expandTest("$HELLO$?", "Hello9", 9),
-	new expandTest("\"$WORLD\"", "World"),
-	new expandTest("\"Woooooo $HELLO wooooo\"", "Woooooo Hello wooooo"),
-	new expandTest("\'$HELLO $WORLD\'", "$HELLO $WORLD"),
-	new expandTest("$HELLO \'$HELLO\' \"$HELLO\" $HELLO", "Hello $HELLO Hello Hello"),
-	new expandTest("\'\"$HELLO\"\'", "\"$HELLO\""),
-	new expandTest("\"\'$HELLO\'\"", "\'Hello\'"),
-	new expandTest("\' Hiii \"$HELLO\"\'", " Hiii \"$HELLO\""),
-	new expandTest("\" Hiii \'$HELLO\'\"", " Hiii \'Hello\'"),
-	new expandTest("\"\'a\'\"", "\'a\'")
+	new expandTest("\"$WORLD\"", "\"World\""),
+	new expandTest("\"Woooooo $HELLO wooooo\"", "\"Woooooo Hello wooooo\""),
+	new expandTest("\'$HELLO $WORLD\'", "\'$HELLO $WORLD\'"),
+	new expandTest("$HELLO \'$HELLO\' \"$HELLO\" $HELLO", "Hello \'$HELLO\' \"Hello\" Hello"),
+	new expandTest("\'\"$HELLO\"\'", "\'\"$HELLO\"\'"),
+	new expandTest("\"\'$HELLO\'\"", "\"\'Hello\'\""),
+	new expandTest("\' Hiii \"$HELLO\"\'", "\' Hiii \"$HELLO\"\'"),
+	new expandTest("\" Hiii \'$HELLO\'\"", "\" Hiii \'Hello\'\""),
+	new expandTest("\"\'a\'\"", "\"\'a\'\"")
 })
 {	}
