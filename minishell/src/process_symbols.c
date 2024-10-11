@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   process_symbols.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 23:57:27 by akernot           #+#    #+#             */
-/*   Updated: 2024/02/02 00:31:17 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:34:30 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 #include "environment_variables.h"
 #include "redirect.h"

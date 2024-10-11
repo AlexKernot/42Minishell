@@ -6,14 +6,16 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 23:17:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 18:01:27 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:34:08 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
+#include "libft.h"
 #include "tokenizer.h"
 #include "syntax_tree.h"
 #include "shunting_yard.h"
@@ -71,6 +73,7 @@ int	run(char *input)
 	if (input == NULL || input[0] == '\0' || input[0] == '\n')
 		return (0);
 	expanded = expand(input, last_return);
+	//printf("Expanded: %s\n", expanded);
 	if (expanded == NULL)
 		expanded = input;
 	tokens = tokenize(expanded);

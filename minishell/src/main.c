@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 17:34:03 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/14 22:10:56 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/21 17:23:42 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "environment_variables.h"
 #include "run.h"
 
-noreturn static void	stdin_err(const char *message)
+static void	stdin_err(const char *message)
 {
 	if (message != NULL)
 	{
@@ -36,13 +36,19 @@ static int	read_stdin(char *input)
 	const int	max_command_size = 4096;
 	int		write_return;
 	int		i;
+	static int	eof = 0;
 
+	if (eof == 1 || input == NULL)
+		return (1);
 	i = 0;
 	while (i < max_command_size)
 	{
 		write_return = read(STDIN_FILENO, &input[i], 1);
 		if (write_return == 0)
-			return (1);
+		{
+			eof = 1;
+			return (0);
+		}
 		if (write_return != 1)
 		{
 			input[i] = '\0';
@@ -57,9 +63,7 @@ static int	read_stdin(char *input)
 		++i;
 	}
 	stdin_err("command longer than 4096 characters.");
-	// char *str = get_next_line(STDIN_FILENO);
-	// ft_memcpy(input, str, ft_strlen(str));
-	// free(str);
+	return (1);
 }
 
 /**
@@ -83,8 +87,6 @@ static int	start_stream(void)
 		read_status = read_stdin(input);
 		if (read_status != 0)
 			return (last_return);
-		// write(STDOUT_FILENO, "\n", 1);
-		// fflush(stdout);
 		last_return = run(input);
 	}
 	return (last_return);
@@ -107,7 +109,9 @@ int	main(int ac, char *const av[], char *const envp[])
 		clear_history();
 	}
 	else
+	{
 		return (start_stream());
+	}
 	clear_env_vars();
 	return (0);
 }

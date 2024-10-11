@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 16:59:10 by akernot           #+#    #+#             */
-/*   Updated: 2024/05/01 15:31:50 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/17 16:37:57 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <stdnoreturn.h>
 
 /** 
  * @author Alex Kernot
@@ -87,7 +86,7 @@ static char	*get_hostname(void)
  * variables. It then starts the main loop waiting for user input and running
  * it.
 */
-_Noreturn void	start_interactive(void)
+void	start_interactive(void)
 {
 	const char	*user = getenv("USER");
 	const char	*hostname = get_hostname();

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 15:30:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 15:04:06 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:31:58 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include "run.h"
 #include "environment_variables.h"
 #include "builtin.h"
+#include "redirect.h"
 
 static int create_subshell(t_command *cmd, int in_fd, int out_fd)
 {
@@ -32,20 +33,18 @@ static int create_subshell(t_command *cmd, int in_fd, int out_fd)
 	pid = fork();
 	if (pid != 0)
 	{
-		if (in_fd != STDIN_FILENO)
-			close(in_fd);
 		waitpid(pid, &retval, 0);
 		return (process_exit_status(retval));
 	}
 	signal(SIGINT, SIG_DFL);
 	dup2(in_fd, STDIN_FILENO);
 	dup2(out_fd, STDOUT_FILENO);
-	if (out_fd != STDOUT_FILENO)
-		close(out_fd);
+	if (redirect(cmd) == 1)
+		exit(1);
 	if (is_builtin(cmd->command))
 		exit(run_builtin(cmd->args->array));
 	run_path(cmd->args->array);
-	perror("minishell: ");
+	perror("minishell: an unexpected error occurred");
 	exit(1);
 }
 
@@ -67,8 +66,8 @@ static int run_pipe(t_syntax_tree *tree, int in_fd, int out_fd)
 	}
 	retval1 = evaluate_commands(tree->left, in_fd, fds[WRITE_FD]);
 	close(fds[WRITE_FD]);
-	if (retval1 != 0)
-		return (retval1);
+	// if (retval1 != 0)
+	//	return (retval1);
 	retval2 = evaluate_commands(tree->right, fds[READ_FD], out_fd);
 	close(fds[READ_FD]);
 	return (retval2);

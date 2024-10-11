@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:21:45 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:45:32 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 20:53:48 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #include "libft.h"
 #include "builtin.h"
+#include "expand.h"
 #include "environment_variables.h"
 
 /**
@@ -26,8 +27,10 @@
  * loops over all environment variables and prints out name=value pairs,
  * or just name if value doesn't exist.
 */
-static void	print_envs(t_env_vars *env)
+static void	print_envs(void)
 {
+	const t_env_vars *env = *(get_env_vars());
+
 	while (env != NULL)
 	{
 		if (env->name == NULL)
@@ -50,46 +53,19 @@ static void	print_envs(t_env_vars *env)
  * insert them into their fields respectively. Otherwise set name and set
  * value to NULL.
 */
-static void	insert(t_env_vars *found, char *name, char *toInsert)
+static void	insert(t_env_vars *found, char *name, char *value)
 {
-	int	equal_index;
-	int	stringlen;
-	int	size_of_value;
-
-	equal_index = find_equal_sign(toInsert);
-	stringlen = (int)ft_strlen(toInsert);
-	size_of_value = stringlen - equal_index - 1;
 	if (found->name == NULL)
 		found->name = ft_strdup(name);
 	if (found->val != NULL)
 		free(found->val);
-	if (equal_index != -1)
+	found->val = ft_strdup(value);
+	if (ft_strlen(found->val) == 0)
 	{
-		found->val = ft_substr(toInsert, equal_index + 1, size_of_value);
-		if (ft_strlen(found->val) == 0)
-		{
-			free(found->val);
-			found->val = NULL;
-		}
-		return ;
+		free(found->val);
+		found->val = NULL;
 	}
-	found->val = NULL;
-}
-
-/**
- * @author Prachi Chawda
- * STATIC:
- * returns a newly allocated string just containing the name of an environment.
- * It removes everything after an equal sign.
-*/
-static char	*seperate_name(char *av)
-{
-	int	equal_index;
-
-	equal_index = find_equal_sign(av);
-	if (equal_index == -1)
-		return (ft_strdup(av));
-	return (ft_substr(av, 0, equal_index));
+	return ;
 }
 
 /**
@@ -110,6 +86,41 @@ static t_env_vars	*env_push_front(void)
 	return (retval);
 }
 
+static void	add_env_var(char *var)
+{
+	t_env_vars	*existing_env_var;
+	char		*name;
+	int			equal_sign_index;
+
+	equal_sign_index = find_equal_sign(var);
+	name = ft_strndup(var, equal_sign_index);
+	existing_env_var = find_env_var(name);
+	if (existing_env_var == NULL)
+		existing_env_var = env_push_front();
+	insert(existing_env_var, name, &var[equal_sign_index + 1]);
+	free(name);
+}
+
+int	validate_env_var_name(char *name)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < ft_strlen(name))
+	{
+		if (name[i] == '=' && (i == 0 || i == ft_strlen(name) - 1))
+			return (1);
+		if (name[i] == '=')
+			return (0);
+		if (i == 0 && ft_isalpha(name[i]) == 0)
+			return (1);
+		if (ft_isalnum(name[i]) == 0)
+			return (1);
+		++i;
+	}
+	return (0);
+}
+
 /**
  * @author Prachi Chawda
  * @brief a recreation of the bash builtin 'export'. If no arguments are passed
@@ -125,33 +136,23 @@ static t_env_vars	*env_push_front(void)
  * command. It should start with the command name in index 0, and the array
  * should be terminated by a NULL value.
  * @return 0 is the command succeeded, or 1 or failure.
- * @remark If I had 1 line spare, I could reverse the if clause to make it much
- * cleaner...
 */
 int	builtin_export(int ac, char *av[])
 {
-	t_env_vars	*env;
-	t_env_vars	*found;
-	char		*name;
-	int			i;
+	int	i;
 
-	env = *get_env_vars();
 	if (ac == 1)
-		print_envs(env);
+		print_envs();
 	i = 1;
 	while (i < ac)
 	{
-		if (av[i][0] != '=')
+		if (validate_env_var_name(av[i]) == 1)
 		{
-			name = seperate_name(av[i]);
-			found = find_env_var(name);
-			if (found == NULL)
-				found = env_push_front();
-			insert(found, name, av[i]);
-			free(name);
+			write(2, "minishell: export: not a valid identifier\n",
+				42);
+			return (1);
 		}
-		else
-			write(2, "Can not set env name to '='.\n", 30);
+		add_env_var(av[i]);
 		++i;
 	}
 	return (0);

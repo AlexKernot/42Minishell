@@ -6,13 +6,14 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 15:54:08 by pchawda           #+#    #+#             */
-/*   Updated: 2024/05/02 17:07:36 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/17 16:34:40 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "libft.h"
 #include "builtin.h"
@@ -26,8 +27,14 @@ t_bool is_number(char *input)
 	while (input[i] != '\0')
 	{
 		a = input[i];
-		if (a != '+' && a != '-' && ft_isdigit(a) == false)
+		if (i == 0 && (a == '+' || a == '-'))
+		{
+			++i;
+			continue;
+		}
+		else if (ft_isdigit(a) == false)
 			return (false);
+		++i;
 	}
 	return (true);
 }
@@ -37,15 +44,29 @@ t_bool is_number(char *input)
 */
 int	builtin_exit(int ac, char *av[])
 {
-	write(1, "exit\n", 5);
+	int	exit_number;
+
+	if (isatty(STDIN_FILENO) == true && isatty(STDOUT_FILENO) == true)
+		write(1, "exit\n", 5);
 	if (ac > 2)
 	{
-		write(STDERR_FILENO, "minishell: exit: too many arguments", 36);
+		write(STDERR_FILENO, "minishell: exit: ", 17);
+		write(STDERR_FILENO, "too many arguments\n", 19);
 		return (1);
 	}
 	if (ac == 1)
 		exit(0);
-	if (ft_isdigit(av[1][0]) == true)
-		exit(av[1][0] - '0');
-	exit(av[1][0] % 256);
+	if (is_number(av[1]) == false)
+	{
+		write(STDERR_FILENO, "minishell: exit: ", 17);
+		write(STDERR_FILENO, av[1], ft_strlen(av[1]));
+		write(STDERR_FILENO, ": numeric argument required\n", 28);
+		exit(255);
+	}
+	exit_number = ft_atoi(av[1]);
+	if (exit_number < 0)
+		exit_number = (exit_number % 256) + 256;
+	if (exit_number >= 256)
+		exit_number %= 256;
+	exit(exit_number);
 }

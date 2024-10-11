@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 14:29:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 17:39:22 by akernot          ###   ########.fr       */
+/*   Updated: 2024/08/31 14:55:02 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,6 @@ int	builtin_cd(int ac, char *av[])
 	{
 		chdir(getenv("HOME"));
 		return (0);
-	}
-	if (ac > 2)
-	{
-		printf("minishell: cd: too many arguments\n");
-		return (1);
 	}
 	expanded_dir = expand_directory(av[1]);
 	if (chdir(expanded_dir) == -1)

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:01:32 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/29 23:08:41 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/16 17:24:35 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,17 @@ char	*ft_strndup(const char *str, const size_t n)
 	return (new_string);
 }
 
+static char *create_exit_status(const char *str, const int last_return)
+{
+	char	*number;
+	char	*retval;
+
+	number = ft_itoa(last_return);
+	retval = ft_strjoin(number, &str[1]);
+	free(number);
+	return (retval);
+}
+
 char	*extract_env_var(const char *str, const size_t start,
 				const size_t end, const int last_return)
 {
@@ -131,10 +142,11 @@ char	*extract_env_var(const char *str, const size_t start,
 	if (str[start] == '$')
 		++pos;
 	to_expand = ft_strndup(&str[pos], end - pos + 1);
-	if (to_expand[0] == '?' && to_expand[1] == '\0')
+	if (to_expand[0] == '?')
 	{
+		retval = create_exit_status(to_expand, last_return);
 		free(to_expand);
-		return (ft_itoa(last_return));
+		return (retval);
 	}
 	env = ft_getenv(to_expand);
 	if (env == NULL)

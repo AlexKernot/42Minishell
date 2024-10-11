@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:01:18 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/28 15:27:09 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/14 22:42:09 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,6 @@ char 	*expand_str(const char *str, const char *result,
 			const size_t symbol_pos, const int last_return);
 char	*extract_env_var(const char *str, const size_t start,
 				const size_t end, const int last_return);
-	
+char	*ft_strndup(const char *str, const size_t n);
 
 #endif

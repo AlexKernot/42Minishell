@@ -6,21 +6,19 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 23:02:00 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 14:30:11 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 15:57:12 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft.h"
 #include "builtin.h"
 #include "environment_variables.h"
 
+#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdnoreturn.h>
+#include <sys/stat.h>
 
 /**
  * @author Alex Kernot
@@ -56,6 +54,39 @@ int	run_builtin(char **substr)
 	return (127);
 }
 
+void	minishell_error(const char *file, const char *error, const int retval)
+{
+	write(STDERR_FILENO, "minishell: '", 12);
+	if (file != NULL)
+		write(STDERR_FILENO, file, ft_strlen(file));
+	write(STDERR_FILENO, "': ", 3);
+	if (error != NULL)
+		write(STDERR_FILENO, error, ft_strlen(error));
+	write(STDERR_FILENO, "\n", 1);
+	exit(retval);
+}
+
+void	check_file(const char *path)
+{
+	struct stat	results;
+	int		stat_retval;
+
+	if (access(path, F_OK) != 0)
+		minishell_error(path, "No such file or directory", 127);
+	stat_retval = stat(path, &results);
+	if (stat_retval != 0)
+	{
+		perror("minishell: stat");
+		exit(1);
+	}
+	if (path == NULL)
+		minishell_error(NULL, "does not exist", 127);
+	if (S_ISDIR(results.st_mode))
+		minishell_error(path, "is a directory", 126);
+	if ((results.st_mode&S_IXGRP) == 0)
+		minishell_error(path, "Permission denied", 126);
+}
+
 /**
  * @author Alex Kernot
  * @brief compresses the shell's current environment variable into an array of
@@ -67,18 +98,18 @@ int	run_builtin(char **substr)
  * @warning if this function isn't called in a child process, the shell will be
  * replaced by the calling function.
 */
-_Noreturn void	execute(const char *command, char *args[])
+void	execute(const char *command, char *args[])
 {
 	char *const	*envp = compress_env_vars();
 
 	if (ft_strlen(command) == 0)
 	{
-		write(2, "Minishell: '': no such file or directory\n", 42);
+		write(2, "Minishell: '': no such file or directory\n", 41);
 		exit(127);
 	}
+	check_file(command);
 	execve(command, (char *const *)args, envp);
-	write(2, "Minishell:", 11);
-	write(2, command, ft_strlen(command));
-	perror(" ");
-	exit(1);
+	write(2, "minishell: ", 11);
+	perror(command);
+	exit(127);
 }

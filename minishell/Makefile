@@ -2,7 +2,7 @@ NAME=minishell
 
 CC = clang
 CFLAGS = -MD -Wall -Wextra -Wpedantic -g -std=c11 -I./libft/ -I./includes/
-LDFLAGS = -lreadline -fsanitize=address -fsanitize=undefined
+LDFLAGS = -lreadline
 
 FILES = run.c execute.c vector_subset.c process.c hash_func.c \
 		process_symbols.c subshell.c ft_transmit.c start_interactive.c \

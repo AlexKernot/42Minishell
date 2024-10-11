@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 15:55:29 by pchawda           #+#    #+#             */
-/*   Updated: 2024/09/12 18:02:38 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/12 18:16:16 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,23 @@
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "builtin.h"
 #include "environment_variables.h"
-
 
 void	run_pwd(void)
 {
 	const char	*argv[3] = {"/bin/pwd", "-L", NULL};
 	char		**envp;
-	int		pid;
+	int			pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		envp = compress_env_vars();
-		execve("/bin/pwd", (char * const *)argv, envp);
-		write(STDERR_FILENO, "/bin/pwd cannot be found on the system.\n", 40);
+		execve("/bin/pwd", (char *const *)argv, envp);
+		perror("minishell: pwd");
 		exit(1);
 	}
 	waitpid(pid, NULL, 0);

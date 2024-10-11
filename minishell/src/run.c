@@ -6,13 +6,12 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 22:18:59 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 14:30:06 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:33:26 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "builtin.h"
-#include "segment.h"
 #include "run.h"
 #include "redirect.h"
 #include "syntax_tree.h"
@@ -100,9 +99,9 @@ int	run_path(char **substr)
 		free(command);
 		++i;
 	}
-	write(2, "Command '", 10);
+	write(2, "Minishell: ", 11);
 	write(2, *substr, ft_strlen(*substr));
-	write(2, "' not found\n", 13);
+	write(2, ": Command not found\n", 20);
 	exit(127);
 }
 
@@ -119,24 +118,29 @@ int	run_path(char **substr)
 */
 int	run_without_subshell(t_command *command)
 {
-	int			pid;
-	int			retval;
+	int		pid;
+	int		retval;
+	const int	old_stdin = dup(STDIN_FILENO);
+	const int	old_stdout = dup(STDOUT_FILENO);
+	
 
-	dup2(STDIN_FILENO, 15);
-	dup2(STDOUT_FILENO, 16);
 	if (redirect(command) == 1)
 		return (1);
 	if (is_builtin(command->command))
 	{
 		retval = run_builtin(command->args->array);
-		dup2(15, STDIN_FILENO);
-		dup2(16, STDOUT_FILENO);
+		dup2(old_stdin, STDIN_FILENO);
+		dup2(old_stdout, STDOUT_FILENO);
 		return (retval);
 	}
 	pid = fork();
 	if (pid != 0)
 	{
 		waitpid(pid, &retval, 0);
+		close(STDIN_FILENO);
+		close(STDOUT_FILENO);
+		dup2(old_stdin, STDIN_FILENO);
+		dup2(old_stdout, STDOUT_FILENO);
 		return (process_exit_status(retval));
 	}
 	signal(SIGQUIT, SIG_DFL);

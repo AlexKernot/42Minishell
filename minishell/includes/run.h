@@ -6,14 +6,13 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:59:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 19:31:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:33:00 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RUN_H
 # define RUN_H
 
-# include "segment.h"
 # include "syntax_tree.h"
 
 int	run(char *input);

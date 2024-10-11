@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 15:53:24 by pchawda           #+#    #+#             */
-/*   Updated: 2024/01/28 18:45:14 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/17 16:51:47 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ int	builtin_env(int ac, char *av[])
 	i = 0;
 	while (i < env_len())
 	{
-		write(2, env[i], strlen(env[i]));
-		write(2, "\n", 1);
+		write(STDOUT_FILENO, env[i], strlen(env[i]));
+		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
 	clear_array(env);

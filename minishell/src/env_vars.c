@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:23:55 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/30 22:00:10 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/21 18:47:24 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,11 @@ void	init_env_vars(char *const envp[])
 	while (i < ft_arrlen((char **)envp))
 	{
 		size = find_equal_sign(envp[i]);
+		if (strncmp(envp[i], "OLDPWD", 6) == 0)
+		{
+			++i;
+			continue;
+		}
 		current = make_env_var(current, ft_substr(envp[i], 0, size),
 			ft_substr(envp[i], size + 1, ft_strlen(envp[i]) - size)
 		);

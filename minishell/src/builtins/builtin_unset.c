@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:23:01 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/28 18:45:56 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 18:24:38 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "libft.h"
 #include "builtin.h"
@@ -64,6 +65,13 @@ int	builtin_unset(int ac, char *args[])
 	i = 1;
 	while (i < ac)
 	{
+		if (validate_env_var_name(args[i]) == 1)
+		{
+			write(STDERR_FILENO, "minishell: unset: `", 19);
+			write(STDERR_FILENO, args[i], ft_strlen(args[i]));
+			write(STDERR_FILENO, "': not a valid identifier\n", 26);
+			return (1);
+		}
 		delete_env_var(env, args[i]);
 		++i;
 	}

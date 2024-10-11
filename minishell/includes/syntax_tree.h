@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/27 16:57:24 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 16:51:57 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:35:15 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,16 @@ typedef enum e_op_or_cmd
 	op,
 	command
 }	t_op_or_cmd;
+
+
+typedef enum e_redirect_type
+{
+	redir_in = '1',
+	redir_out = '2',
+	redir_delim = '3',
+	redir_append = '4',
+	redir_none = '5'
+}	t_redirect_type;
 
 typedef struct s_tree_item
 {

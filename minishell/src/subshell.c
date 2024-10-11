@@ -6,14 +6,13 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 16:53:14 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 18:54:51 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:33:17 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
 #include "redirect.h"
-#include "segment.h"
 #include "run.h"
 
 #include <unistd.h>

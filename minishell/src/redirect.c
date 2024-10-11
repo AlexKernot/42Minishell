@@ -6,14 +6,14 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 15:24:46 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 19:36:32 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 16:36:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "redirect.h"
-#include "segment.h"
 #include "syntax_tree.h"
+#include "libft.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -92,7 +92,7 @@ static int	delim(char	*toFind)
  * returns the file descriptor for a newly opened file depending on the type
  * required for redirecting.
 */
-static int	open_file(char *file, t_segment_type type)
+static int	open_file(char *file, t_redirect_type type)
 {
 	if (type == redir_in)
 		return (open(file, O_RDONLY));
@@ -114,25 +114,32 @@ int	redirect(t_command *command)
 {
 	int			i;
 	int			fd;
-	t_segment_type	type;
+	t_redirect_type	type;
 	char		*file;
 
 	i = 0;
+	//printf("Redirects size %d\n", command->redirects->size);
 	while (i < command->redirects->size)
 	{
 		file = command->redirects->array[i];
-		type = command->redir_types->array[i][0] - '0';
+		type = command->redir_types->array[i][0];
 		fd = open_file(file, type);
 		if (fd == -1)
 		{
-			write(2, "minishell: ", 12);
+			write(2, "minishell: ", 11);
 			perror(file);
 			return (1);
 		}
 		if (type == redir_in || type == redir_delim)
+		{
+			//printf("Redirecting input: %s %d\n", command->redir_types->array[i] , type);
 			dup2(fd, STDIN_FILENO);
+		}
 		else if (type == redir_out || type == redir_append)
+		{
+			//printf("Redirecting output: %s %d\n", command->redir_types->array[i] , type);
 			dup2(fd, STDOUT_FILENO);
+		}
 		++i;
 	}
 	return (0);

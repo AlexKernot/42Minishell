@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 18:44:40 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/25 17:19:24 by akernot          ###   ########.fr       */
+/*   Updated: 2024/09/25 15:11:16 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,8 @@ uint16_t	split(t_token_list *token_list, const char *string,
 		quote = handle_quote(string[i], quote);
 		++i;
 	}
+	if (quote != '\0' && handle_quote(string[i], quote) == '\0')
+		++i;
 	//printf("	Splitting at %d: '%s'. [%s] %s [%c]\n", i, &string[start], &string[i], type == letter_c ? "Letter" : "Symbol", quote);
 	if (type == letter_c)
 		add_words(token_list, string, start, i);
