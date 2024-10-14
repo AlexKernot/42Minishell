@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:21:45 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 20:53:48 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 21:06:58 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,11 @@ static void	add_env_var(char *var)
 	equal_sign_index = find_equal_sign(var);
 	name = ft_strndup(var, equal_sign_index);
 	existing_env_var = find_env_var(name);
+	if (existing_env_var != NULL && equal_sign_index == -1)
+	{
+		free(name);
+		return ;
+	}
 	if (existing_env_var == NULL)
 		existing_env_var = env_push_front();
 	insert(existing_env_var, name, &var[equal_sign_index + 1]);
