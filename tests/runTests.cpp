@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 17:56:53 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 18:51:01 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,33 @@ bool operator!=(const t_token_list *a, const std::vector<std::string>& b)
 	return true;
 }
 
+std::string get_escape_code(const char a)
+{
+	switch (a)
+	{
+	case '\0':
+		return "\\0";
+	case '\n':
+		return "\\n";
+	case '\t':
+		return "\\t";
+	case '\b':
+		return "\\b";
+	case '\r':
+		return "\\r";
+	case '\a':
+		return "\\a";
+	case '\f':
+		return "\\f";
+	case '\v':
+		return "\\v";
+	default:
+		std::stringstream str;
+		str << "\\" << a;
+		return str.str();
+	}
+}
+
 std::string sanitizeString(const char *dest)
 {
 	if (dest == NULL) {
@@ -96,7 +123,7 @@ std::string sanitizeString(const char *dest)
 	std::string result = "";
 	for (std::size_t i = 0; i < strlen; ++i) {
 		if (dest[i] != '\0' && std::isprint(dest[i]) == false)
-			result += '.';
+			result += get_escape_code(dest[i]);
 		else
 			result += dest[i];
 	}

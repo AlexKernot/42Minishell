@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 15:04:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/24 18:13:00 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 20:21:13 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,20 +77,18 @@ std::string fileTests::run(bool debug, std::string testName, int index) const
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &window);
 	const int resultsPerLine = std::max(window.ws_col - 40, 40);
 	int i = 0;
-	int testIndex = 0;
 	std::string testListName = lower(getTestName());
 	for (individualTest* test : testList)
 	{
 		std::string nextTest = lower(test->getTestName());
 
-		if (testName == "" || testName == testListName)
+		if (testName == "")
 			execute(test, results, debug);
 		else if ((testName == nextTest || testListName == testName)
-			&& (index == testIndex || index == -1))
+			&& (index == i || index == -1))
 			execute(test, results, debug);
 		else
 			write(STDOUT_FILENO, "_", 1);
-		++testIndex;
 		++i;
 		if (i >= resultsPerLine) {
 			write(STDOUT_FILENO, "\n", 1);
