@@ -1,36 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_back_bonus.c                             :+:      :+:    :+:   */
+/*   ft_atol.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/12 19:30:13 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 17:31:58 by akernot          ###   ########.fr       */
+/*   Created: 2024/10/14 17:31:06 by akernot           #+#    #+#             */
+/*   Updated: 2024/10/14 17:40:56 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <string.h>
-#include "libft.h"
+#ifndef FT_ATOL_H
+# define FT_ATOL_H
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
-{
-	t_list	*end;
+long	ft_atol(const char *nptr);
+int	ft_is_long(const char *nptr);
 
-	if (new == NULL || lst == NULL)
-		return ;
-	if (*lst == NULL)
-	{
-		*lst = new;
-		return ;
-	}
-	end = ft_lstlast(*lst);
-	end->next = new;
-}
-/*
-int main(void)
-{
-	t_list *l = NULL;
-	t_list *n = ft_lstnew(ft_strdup("OK"));
-	ft_lstadd_back(&l, n);
-}*/
+#endif

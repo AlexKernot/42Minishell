@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 22:18:59 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 16:33:26 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 17:03:26 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	run_path(char **substr)
 	}
 	write(2, "Minishell: ", 11);
 	write(2, *substr, ft_strlen(*substr));
-	write(2, ": Command not found\n", 20);
+	write(2, ": command not found\n", 20);
 	exit(127);
 }
 

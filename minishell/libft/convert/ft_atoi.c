@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 18:03:12 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/31 14:28:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 17:23:39 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static int	all_zeros(const char *nptr, int i)
 	{
 		if (nptr[i] != 0)
 			return (0);
+		++i;
 	}
 	return (1);
 }
