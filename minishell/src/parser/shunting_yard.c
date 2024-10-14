@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 17:25:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 19:44:27 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 22:00:09 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "tokenizer.h"
 #include "stack.h"
@@ -160,23 +161,30 @@ void	add_token(t_syntax_tree **tree, t_stack *c_stack, t_stack *o_stack,
 		char *token)
 {
 	static t_command	*last_command = NULL;
-
 	if (tree == NULL || c_stack == NULL || o_stack == NULL || token == NULL)
 		return ;
-	if (*tree == NULL && c_stack->data->size == 0 && o_stack->data->size == 0)
+	if (stack_front(c_stack) == NULL)
+	{
+		stack_push(c_stack, create_command(NULL));
+	}
+	if (*tree == NULL && c_stack->data->size == 1 && o_stack->data->size == 0)
 		last_command = NULL;
+	if (last_command == NULL)
+		last_command = stack_front(c_stack);
+	if (tree == NULL || c_stack == NULL || o_stack == NULL || token == NULL)
+		return ;
 	if (is_operator(token))
 	{
 		add_operator(tree, c_stack, o_stack, token);
-		last_command = NULL;
-	}
-	else if (last_command == NULL)
-	{
-		last_command = create_command(token);
+		last_command = create_command(NULL);
 		stack_push(c_stack, last_command);
 	}
 	else
+	{
+		if (last_command->command == NULL)
+			last_command->command = ft_strdup(token);
 		push_token(last_command->args, token);
+	}
 }
 
 int	is_redirect(const char *token)
@@ -228,6 +236,7 @@ static int	initialize_stacks(t_stack **o_stack, t_stack **c_stack)
 	if (o_stack == NULL)
 		return (1);
 	*c_stack = stack_ctor(10);
+	stack_push(*c_stack, create_command(NULL));
 	if (c_stack == NULL)
 	{
 		stack_dtor(o_stack);
@@ -236,27 +245,59 @@ static int	initialize_stacks(t_stack **o_stack, t_stack **c_stack)
 	return (0);
 }
 
-t_syntax_tree	*convert_postfix(t_token_list *tokens)
+t_syntax_tree	*run_postfix_algorithm(t_token_list *tokens, t_stack *c_stack, t_stack *o_stack)
 {
-	t_syntax_tree	*syntax_tree;
-	t_stack		*o_stack;
-	t_stack		*c_stack;
-	char		*token;
 	uint16_t	i;
+	char		*token;
+	t_syntax_tree	*syntax_tree;
 
-	syntax_tree = NULL;
-	if (initialize_stacks(&o_stack, &c_stack) == 1)
-		return (NULL);
 	i = 0;
+	syntax_tree = NULL;
 	while (i < token_list_size(tokens))
 	{
 		token = get_token(tokens, i);
 		if (is_redirect(token))
+		{
 			add_redirect(stack_front(c_stack), token,
 				get_token(tokens, i + 1), &i);
+		}
 		else
 			add_token(&syntax_tree, c_stack, o_stack, token);
 		++i;
+	}
+	return (syntax_tree);
+}
+
+void	cleanup_postfix(t_syntax_tree **tree, t_stack **c_stack,
+				t_stack **o_stack)
+{
+	delete_syntax_tree(tree);
+	stack_dtor(c_stack);
+	stack_dtor(o_stack);
+}
+
+t_syntax_tree	*convert_postfix(t_token_list *tokens)
+{
+	t_stack		*o_stack;
+	t_stack		*c_stack;
+	t_syntax_tree	*syntax_tree;
+	t_command	*front;
+
+	if (initialize_stacks(&o_stack, &c_stack) == 1)
+		return (NULL);
+	syntax_tree = run_postfix_algorithm(tokens, c_stack, o_stack);
+	front = stack_front(c_stack);
+	if (front != NULL && front->command == NULL)
+	{
+		front = stack_pop(c_stack);
+		if (front->args->size != 0 || front->redirects->size != 0)
+		{
+			write(STDERR_FILENO, "minishell: syntax error\n", 24);
+			cleanup_postfix(&syntax_tree, &c_stack, &o_stack);
+			return (NULL);
+		}
+		delete_command(front);
+		free(front);
 	}
 	purge_stack(&syntax_tree, c_stack, o_stack);
 	stack_dtor(&c_stack);

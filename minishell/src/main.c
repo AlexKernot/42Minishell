@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 17:34:03 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/21 17:23:42 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 22:15:09 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,21 @@ static int	read_stdin(char *input)
 	return (1);
 }
 
+static int	is_empty(const char *input)
+{
+	size_t	i;
+	char	a;
+
+	i = 0;
+	while (input[i] != '\0')
+	{
+		a = input[i];
+		if (a != ' ' && a != '\n' && ft_isprint(a) == 1)
+			return (0);
+	}
+	return (1);
+}
+
 /**
  * @author Alex Kernot 
  * STATIC:
@@ -87,6 +102,8 @@ static int	start_stream(void)
 		read_status = read_stdin(input);
 		if (read_status != 0)
 			return (last_return);
+		if (is_empty(input) == 1)
+			continue;
 		last_return = run(input);
 	}
 	return (last_return);

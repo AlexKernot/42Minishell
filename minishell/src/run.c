@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 22:18:59 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 19:05:34 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 22:15:49 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int	run_path(char **substr)
 		free(command);
 		++i;
 	}
-	write(2, "Minishell: ", 11);
+	write(2, "minishell: ", 11);
 	write(2, *substr, ft_strlen(*substr));
 	write(2, ": command not found\n", 20);
 	exit(127);
@@ -146,7 +146,7 @@ int	run_without_subshell(t_command *command, int last_return)
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
 	run_path(command->args->array);
-	exit(0);
+	exit(127);
 }
 
 /**
@@ -169,7 +169,7 @@ void	run_command(t_command *command, int last_return)
 	if (is_builtin(command->command))
 		exit(run_builtin(command->args->array));
 	run_path(command->args->array);
-	exit(0);
+	exit(127);
 }
 
 /*

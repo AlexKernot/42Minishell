@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 23:17:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 19:07:06 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 22:16:37 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,23 +24,6 @@
 #include "environment_variables.h"
 #include "expand.h"
 
-static void print_tree(t_syntax_tree *tree, int level)
-{
-	if (tree == NULL)
-		return ;
-	for (int i = 0; i < level; ++i)
-		write(STDOUT_FILENO, "-", 1);
-	if (tree->contents.type == op)
-		write(STDOUT_FILENO, tree->contents.contents.operator_word,
-			ft_strlen(tree->contents.contents.operator_word));
-	else
-		write(STDOUT_FILENO, tree->contents.contents.command->command,
-			ft_strlen(tree->contents.contents.command->command));
-	write(STDOUT_FILENO, "\n", 1);
-	print_tree(tree->right, level + 1);
-	print_tree(tree->left, level + 1);
-}
-
 static int is_one_command(t_syntax_tree *tree)
 {
 	if (tree == NULL)
@@ -55,6 +38,23 @@ static int is_one_command(t_syntax_tree *tree)
 	if (tree->left->contents.type == command)
 		return (1);
 	return (0);
+}
+
+static int	run_tree(t_syntax_tree *tree, int last_return)
+{
+	int ret;
+
+	if (is_one_command(tree) == 1)
+	{
+		ret = run_without_subshell
+			(tree->left->contents.contents.command, last_return);
+		return ret;
+	}
+	else
+	{
+		return (evaluate_commands(tree,
+			STDIN_FILENO, STDOUT_FILENO, last_return));
+	}
 }
 
 /**
@@ -73,7 +73,11 @@ int	run(char *input)
 	if (input == NULL || input[0] == '\0' || input[0] == '\n')
 		return (0);
 	expanded = expand(input, last_return);
-	//printf("Expanded: %s\n", expanded);
+	if (ft_strlen(expanded) == 0)
+	{
+		last_return = 0;
+		return (0);
+	}
 	if (expanded == NULL)
 		expanded = input;
 	tokens = tokenize(expanded);
@@ -81,13 +85,7 @@ int	run(char *input)
 	tree = convert_postfix(tokens);
 	free(tokens->array);
 	free(tokens);
-	//print_tree(tree, 0);
-	if (is_one_command(tree) == 1)
-		last_return = run_without_subshell
-			(tree->left->contents.contents.command, last_return);
-	else
-		last_return = evaluate_commands(tree,
-			STDIN_FILENO, STDOUT_FILENO, last_return);
+	last_return = run_tree(tree, last_return);
 	delete_syntax_tree(&tree);
 	return (last_return);
 }

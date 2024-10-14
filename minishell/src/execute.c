@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 23:02:00 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 15:57:12 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 22:00:52 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	execute(const char *command, char *args[])
 
 	if (ft_strlen(command) == 0)
 	{
-		write(2, "Minishell: '': no such file or directory\n", 41);
+		write(2, "minishell: '': no such file or directory\n", 41);
 		exit(127);
 	}
 	check_file(command);

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 16:41:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/25 19:30:53 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 22:06:52 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,30 +414,30 @@ void shuntingYardAddToken::test(int logFD) const
 
 	// Make sure tree is constructed properly
 	add_token(&tree, c_stack, o_stack, createStr("|"));
-	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 0, 1,
+	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 1, 1,
 		{"command1", "command2", "|"});
 
 	// Test brackets are handled correctly
 	add_token(&tree, c_stack, o_stack, createStr("("));
-	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 0, 2,
+	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 2, 2,
 		{"command1", "command2", "|"});
 
 	// Add command within brackets
 	add_token(&tree, c_stack, o_stack, createStr("command4"));
-	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 1, 2,
+	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 2, 2,
 		{"command1", "command2", "|"});
 
 	add_token(&tree, c_stack, o_stack, createStr("&&"));
-	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 1, 3,
+	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 3, 3,
 		{"command1", "command2", "|"});
 
 	add_token(&tree, c_stack, o_stack, createStr("command3"));
-	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 2, 3,
+	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 3, 3,
 		{"command1", "command2", "|"});
 	
 	// Close brackets
 	add_token(&tree, c_stack, o_stack, createStr(")"));
-	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 1, 1,
+	expectTree(logFD,  getTestName(), tree, c_stack, o_stack, 3, 1,
 		{"command1", "command2", "|", "command3", "&&"});
 
 	delete_syntax_tree(&tree);
@@ -543,6 +543,7 @@ shuntingYardTestList::shuntingYardTestList()
 		
 		new shuntingYardConvertPostfix({}, {}),
 		new shuntingYardConvertPostfix({"Command", "Arg1", "<<", "Redir"}, {"Command", "."}),
+		new shuntingYardConvertPostfix({"<<", "Redir", "hello"}, {"hello", "."}),
 		new shuntingYardConvertPostfix({"Command1", "|", "Command2"}, {"Command1", "Command2", "|"}),
 		new shuntingYardConvertPostfix({"Command1", "Arg1", "<<", "Redir", "|", "Command2", "Arg1", ">>", "Redir"}, {"Command1", "Command2", "|"}),
 		new shuntingYardConvertPostfix({"Command1", "|", "Command2", "|", "Command3"}, {"Command1", "Command2", "|", "Command3", "|"})
