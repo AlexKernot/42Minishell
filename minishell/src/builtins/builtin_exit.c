@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 15:54:08 by pchawda           #+#    #+#             */
-/*   Updated: 2024/09/17 16:34:40 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 17:41:14 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include "libft.h"
 #include "builtin.h"
+#include "ft_atol.h"
 
-t_bool is_number(char *input)
+t_bool is_number(const char *input)
 {
 	int		i;
 	char	a;
 
 	i = 0;
+	if (ft_is_long(input) == false)
+		return (false);
 	while (input[i] != '\0')
 	{
 		a = input[i];
@@ -44,7 +48,7 @@ t_bool is_number(char *input)
 */
 int	builtin_exit(int ac, char *av[])
 {
-	int	exit_number;
+	long	exit_number;
 
 	if (isatty(STDIN_FILENO) == true && isatty(STDOUT_FILENO) == true)
 		write(1, "exit\n", 5);
@@ -63,7 +67,7 @@ int	builtin_exit(int ac, char *av[])
 		write(STDERR_FILENO, ": numeric argument required\n", 28);
 		exit(255);
 	}
-	exit_number = ft_atoi(av[1]);
+	exit_number = ft_atol(av[1]);
 	if (exit_number < 0)
 		exit_number = (exit_number % 256) + 256;
 	if (exit_number >= 256)

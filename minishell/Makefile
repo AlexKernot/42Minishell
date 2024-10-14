@@ -11,7 +11,7 @@ FILES = run.c execute.c vector_subset.c process.c hash_func.c \
 		builtin_echo.c builtin_env.c builtin_exit.c builtin_export.c \
 		builtin_pwd.c builtin_unset.c builtin_cd.c \
 		tokenizer.c token_list.c syntax_tree.c shunting_yard.c \
-		ft_stack.c evaluator.c expand.c
+		ft_stack.c evaluator.c expand.c ft_atol.c
 
 OUTPUTDIR = ./bin
 
