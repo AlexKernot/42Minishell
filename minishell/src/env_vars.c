@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:23:55 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/21 18:47:24 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 16:54:58 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,6 @@
 
 /**
  * @author Prachi Chawda
- * @details I understand this isn't a good way of handling environment variables
- * however, the 42 style guide (Norminette) is too restrictive, especially with
- * a parameter limit of 4, and function line limit of 25. To elegantly make 
- * another solution, I would need to do the equivalent of dependancy injection
- * which would use one of my 4 arguments in just about every function.
  * @brief uses a singleton design pattern to create a process-global variable
  * for use with storing environment variables in a modifiable way
  * @return the process-global environment variable list

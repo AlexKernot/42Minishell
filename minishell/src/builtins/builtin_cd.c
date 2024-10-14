@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 14:29:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/31 14:55:02 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 16:58:13 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,23 @@ static char	*expand_directory(char *path)
 	return (ft_strdup(path));
 }
 
+static void	set_old_pwd(char *path)
+{
+	t_env_vars	*old_pwd;
+
+	old_pwd = find_env_var("OLDPWD");
+	if (old_pwd == NULL)
+	{
+		old_pwd = *(get_env_vars());
+		while (old_pwd->next != NULL)
+			old_pwd = old_pwd->next;
+		make_env_var(old_pwd, ft_strdup("OLDPWD"), ft_strdup(path));
+		return ;
+	}
+	free(find_env_var("OLDPWD")->val);
+	find_env_var("OLDPWD")->val = ft_strdup(path);
+}
+
 /**
  * @author Prachi Chawda
  * @brief A recreation of the bash CD builtin. It changes the working directory
@@ -62,8 +79,10 @@ int	builtin_cd(int ac, char *av[])
 	char	*expanded_dir;
 	char	cwd[255];
 
+	getcwd(cwd, 255);
 	if (ac == 1)
 	{
+		set_old_pwd(cwd);
 		chdir(getenv("HOME"));
 		return (0);
 	}
@@ -74,8 +93,9 @@ int	builtin_cd(int ac, char *av[])
 		free(expanded_dir);
 		return (1);
 	}
-	free(find_env_var("PWD")->val);
+	set_old_pwd(cwd);
 	getcwd(cwd, 255);
+	free(find_env_var("PWD")->val);
 	find_env_var("PWD")->val = ft_strdup(cwd);
 	free(expanded_dir);
 	return (0);

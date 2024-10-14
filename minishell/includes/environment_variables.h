@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment_variables.h                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akernot <akernot@student.42Adel.org.au>    +#+  +:+       +#+        */
+/*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:54:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/01/25 19:41:11 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 16:56:51 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ char		*expand_env_vars(char *tmp, int last_return);
 t_env_vars	**get_env_vars(void);
 int			env_len(void);
 void		init_env_vars(char *const envp[]);
+t_env_vars	*make_env_var(t_env_vars *current, char *name, char *value);
 char		**compress_env_vars(void);
 t_env_vars	*find_env_var(char *name);
 void		clear_env_vars(void);
