@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 23:17:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 16:34:08 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 19:07:06 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,10 @@ int	run(char *input)
 	//print_tree(tree, 0);
 	if (is_one_command(tree) == 1)
 		last_return = run_without_subshell
-			(tree->left->contents.contents.command);
+			(tree->left->contents.contents.command, last_return);
 	else
 		last_return = evaluate_commands(tree,
-			STDIN_FILENO, STDOUT_FILENO);
+			STDIN_FILENO, STDOUT_FILENO, last_return);
 	delete_syntax_tree(&tree);
 	return (last_return);
 }

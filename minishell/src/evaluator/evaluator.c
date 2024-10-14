@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 15:30:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 16:31:58 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 19:08:38 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 #include "builtin.h"
 #include "redirect.h"
 
-static int create_subshell(t_command *cmd, int in_fd, int out_fd)
+static int create_subshell(t_command *cmd, int in_fd, int out_fd,
+				int last_return)
 {
 	pid_t 		pid;
 	int 		retval;
@@ -39,7 +40,7 @@ static int create_subshell(t_command *cmd, int in_fd, int out_fd)
 	signal(SIGINT, SIG_DFL);
 	dup2(in_fd, STDIN_FILENO);
 	dup2(out_fd, STDOUT_FILENO);
-	if (redirect(cmd) == 1)
+	if (redirect(cmd, dup(STDIN_FILENO), last_return) == 1)
 		exit(1);
 	if (is_builtin(cmd->command))
 		exit(run_builtin(cmd->args->array));
@@ -48,7 +49,7 @@ static int create_subshell(t_command *cmd, int in_fd, int out_fd)
 	exit(1);
 }
 
-static int run_pipe(t_syntax_tree *tree, int in_fd, int out_fd)
+static int run_pipe(t_syntax_tree *tree, int in_fd, int out_fd, int last_return)
 {
 	int fds[2];
 	int retval1;
@@ -64,55 +65,30 @@ static int run_pipe(t_syntax_tree *tree, int in_fd, int out_fd)
 		write(STDERR_FILENO, "Could not create pipes\n", 23);
 		return (1);
 	}
-	retval1 = evaluate_commands(tree->left, in_fd, fds[WRITE_FD]);
+	retval1 = evaluate_commands(tree->left, in_fd, fds[WRITE_FD],
+					last_return);
 	close(fds[WRITE_FD]);
 	// if (retval1 != 0)
 	//	return (retval1);
-	retval2 = evaluate_commands(tree->right, fds[READ_FD], out_fd);
+	retval2 = evaluate_commands(tree->right, fds[READ_FD], out_fd,
+					last_return);
 	close(fds[READ_FD]);
 	return (retval2);
 }
 
-static int or(t_syntax_tree *tree, int in_fd, int out_fd)
-{
-	if (tree == NULL || tree->left == NULL || tree->right == NULL)
-	{
-		write(STDERR_FILENO, "parse error near `||`\n", 22);
-		return (1);
-	}
-	evaluate_commands(tree->left, in_fd, out_fd);
-	return (evaluate_commands(tree->right, in_fd, out_fd));
-}
-
-static int and(t_syntax_tree *tree, int in_fd, int out_fd)
-{
-	int retval1;
-	int retval2;
-
-	if (tree == NULL || tree->left == NULL || tree->right == NULL)
-	{
-		write(STDERR_FILENO, "parse error near `&&`\n", 22);
-		return (1);
-	}
-	retval1 = evaluate_commands(tree->left, in_fd, out_fd);
-	if (retval1 != 0)
-		return (retval1);
-	retval2 = evaluate_commands(tree->right, in_fd, out_fd);
-	return (retval2);
-}
-
-static int single(t_syntax_tree *tree, int in_fd, int out_fd)
+static int single(t_syntax_tree *tree, int in_fd, int out_fd, int last_return)
 {
 	if (tree == NULL || tree->left == NULL || tree->right != NULL)
 	{
 		write(STDERR_FILENO, "single command syntax error\n", 28);
 		return (1);
 	}
-	return (evaluate_commands(tree->left, in_fd, out_fd));
+	return (evaluate_commands(tree->left, in_fd, out_fd, last_return));
 }
 
 /* retval is retval of run command */
-int	evaluate_commands(t_syntax_tree *tree, int in_fd, int out_fd)
+int	evaluate_commands(t_syntax_tree *tree, int in_fd, int out_fd,
+				int last_return)
 {
 	char *operator;
 
@@ -121,17 +97,14 @@ int	evaluate_commands(t_syntax_tree *tree, int in_fd, int out_fd)
 	if (tree->contents.type == command)
 	{
 		return (create_subshell
-			(tree->contents.contents.command, in_fd, out_fd));
+			(tree->contents.contents.command, in_fd, out_fd,
+					last_return));
 	}
 	operator = tree->contents.contents.operator_word;
 	if (operator[0] == '|' && operator[1] == '\0')
-		return (run_pipe(tree, in_fd, out_fd));
-	if (operator[0] == '|' && operator[1] == '|' && operator[2] == '\0')
-		return (or(tree, in_fd, out_fd));
-	if (operator[0] == '&' && operator[1] == '&' && operator[2] == '\0')
-		return (and(tree, in_fd, out_fd));
+		return (run_pipe(tree, in_fd, out_fd, last_return));
 	else if (operator[0] == '.' && operator[1] == '\0')
-		return (single(tree, in_fd, out_fd));
+		return (single(tree, in_fd, out_fd, last_return));
 	write(STDERR_FILENO, "Invalid syntax.\n", 16);
 	return (1);
 }

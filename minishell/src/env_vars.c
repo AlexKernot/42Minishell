@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:23:55 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 16:54:58 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 20:56:03 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 
 /**
  * @author Prachi Chawda
@@ -69,6 +70,7 @@ void	init_env_vars(char *const envp[])
 		size = find_equal_sign(envp[i]);
 		if (strncmp(envp[i], "OLDPWD", 6) == 0)
 		{
+			current = make_env_var(current, ft_strdup("OLDPWD"), NULL);
 			++i;
 			continue;
 		}
@@ -106,6 +108,13 @@ char	**compress_env_vars(void)
 	i = 0;
 	while (envp != NULL)
 	{
+		if (envp->val == NULL)
+		{
+			array[i] = ft_strdup(envp->name);
+			++i;
+			envp = envp->next;
+			continue;
+		}
 		tmp = ft_strjoin(envp->name, "=");
 		array[i] = ft_strjoin(tmp, envp->val);
 		free(tmp);

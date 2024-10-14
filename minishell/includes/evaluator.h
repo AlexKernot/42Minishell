@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 00:09:04 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 19:19:43 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 19:07:00 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "syntax_tree.h"
 
-int	evaluate_commands(t_syntax_tree *tree, int in_fd, int out_fd);
+int	evaluate_commands(t_syntax_tree *tree, int in_fd, int out_fd,
+				int last_return);
 
 #endif

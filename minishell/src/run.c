@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 22:18:59 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 17:03:26 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 19:05:34 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int	run_path(char **substr)
  * as well as any information about redirects.
  * @return the exit status of the command that was run.
 */
-int	run_without_subshell(t_command *command)
+int	run_without_subshell(t_command *command, int last_return)
 {
 	int		pid;
 	int		retval;
@@ -124,7 +124,7 @@ int	run_without_subshell(t_command *command)
 	const int	old_stdout = dup(STDOUT_FILENO);
 	
 
-	if (redirect(command) == 1)
+	if (redirect(command, old_stdin, last_return) == 1)
 		return (1);
 	if (is_builtin(command->command))
 	{
@@ -156,13 +156,13 @@ int	run_without_subshell(t_command *command)
  * @param segment the entire command to execute including expanded environment
  * variables and information about each redirect required.
 */
-void	run_command(t_command *command)
+void	run_command(t_command *command, int last_return)
 {
 	const char	*cmd = command->command;
 
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
-	if (redirect(command) == 1)
+	if (redirect(command, dup(STDIN_FILENO), last_return) == 1)
 		exit(1);
 	if (cmd[0] == '/' || cmd[0] == '.' || cmd[0] == '~')
 		execute(cmd, command->args->array);

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:59:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 16:33:00 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 19:05:50 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include "syntax_tree.h"
 
 int	run(char *input);
-void	run_command(t_command *command);
-int	run_without_subshell(t_command *segment);
+void	run_command(t_command *command, int last_return);
+int	run_without_subshell(t_command *segment, int last_return);
 int	process_exit_status(int retval);
 int	run_path(char **substr);
 

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 15:53:24 by pchawda           #+#    #+#             */
-/*   Updated: 2024/09/17 16:51:47 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 20:58:27 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,24 @@
 #include "builtin.h"
 #include "minishell.h"
 #include "environment_variables.h"
+
+void	print_envs(char	**env)
+{
+	int i;
+
+	i = 0;
+	while (i < env_len())
+	{
+		if (ft_strlen(env[i]) > 5 && ft_strncmp("OLDPWD", env[i], 6) == 0)
+		{
+			++i;
+			continue;
+		}
+		write(STDOUT_FILENO, env[i], strlen(env[i]));
+		write(STDOUT_FILENO, "\n", 1);
+		i++;
+	}
+}
 
 /**
  * @author Prachi Chawda
@@ -33,7 +51,6 @@
 int	builtin_env(int ac, char *av[])
 {
 	char	**env;
-	int		i;
 
 	if (ac != 1)
 	{
@@ -48,13 +65,7 @@ int	builtin_env(int ac, char *av[])
 		clear_array(env);
 		return (1);
 	}
-	i = 0;
-	while (i < env_len())
-	{
-		write(STDOUT_FILENO, env[i], strlen(env[i]));
-		write(STDOUT_FILENO, "\n", 1);
-		i++;
-	}
+	print_envs(env);
 	clear_array(env);
 	return (0);
 }
