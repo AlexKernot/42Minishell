@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 18:44:40 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 15:11:16 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/14 20:33:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,12 +188,13 @@ uint16_t	split(t_token_list *token_list, const char *string,
 	}
 	while (i < string_len && string[i] != '\0'
 		&& (get_char_type(string[i]) == type
-			|| handle_quote(string[i], quote) != '\0'))
+			|| handle_quote(string[i], quote) != '\0'
+			|| string[i + 1] == '\'' || string[i + 1] == '\"'))
 	{
 		quote = handle_quote(string[i], quote);
 		++i;
 	}
-	if (quote != '\0' && handle_quote(string[i], quote) == '\0')
+	while (quote != '\0' && handle_quote(string[i], quote) == '\0')
 		++i;
 	//printf("	Splitting at %d: '%s'. [%s] %s [%c]\n", i, &string[start], &string[i], type == letter_c ? "Letter" : "Symbol", quote);
 	if (type == letter_c)
