@@ -1,24 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   run.h                                              :+:      :+:    :+:   */
+/*   token_list_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/25 18:59:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/15 15:33:44 by akernot          ###   ########.fr       */
+/*   Created: 2024/10/15 16:50:40 by akernot           #+#    #+#             */
+/*   Updated: 2024/10/15 16:50:51 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RUN_H
-# define RUN_H
+#include <stdlib.h>
 
-# include "syntax_tree.h"
+#include "token_list.h"
 
-int		run(char *input);
-void	run_command(t_command *command, int last_return);
-int		run_without_subshell(t_command *segment, int last_return);
-int		process_exit_status(int retval);
-int		run_path(char **substr);
+uint16_t	token_list_size(const t_token_list *token_list)
+{
+	if (token_list == NULL)
+		return (0);
+	return (token_list->size);
+}
 
-#endif
+char	*get_token(const t_token_list *token_list, uint16_t index)
+{
+	if (token_list == NULL || token_list->array == NULL)
+		return (NULL);
+	if (index >= token_list->size)
+		return (NULL);
+	return (token_list->array[index]);
+}

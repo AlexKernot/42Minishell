@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 15:54:08 by pchawda           #+#    #+#             */
-/*   Updated: 2024/10/14 17:41:14 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:26:32 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "builtin.h"
 #include "ft_atol.h"
 
-t_bool is_number(const char *input)
+t_bool	is_number(const char *input)
 {
 	int		i;
 	char	a;
@@ -34,7 +34,7 @@ t_bool is_number(const char *input)
 		if (i == 0 && (a == '+' || a == '-'))
 		{
 			++i;
-			continue;
+			continue ;
 		}
 		else if (ft_isdigit(a) == false)
 			return (false);

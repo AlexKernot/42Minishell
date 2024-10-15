@@ -6,116 +6,23 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:01:32 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 19:38:37 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:57:18 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "expand.h"
 
 #include <stddef.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "libft.h"
 #include "environment_variables.h"
+#include "ft_strndup.h"
+#include "ft_strnjoin.h"
+#include "search_string.h"
 
-char	*ft_strnjoin(const char *str1, const char *str2, int max_size)
-{
-	char	*str;
-	int	size1;
-	int	size2;
-
-	size1 = ft_strlen(str1);
-	size2 = ft_strlen(str2);
-	if (size2 > max_size)
-		size2 = max_size;
-	str = (char *)malloc(sizeof(*str) * (size1 + size2 + 1));
-	if (str == NULL)
-		return (NULL);
-	if (ft_memcpy(str, str1, size1) == NULL)
-	{
-		free(str);
-		assert(0);
-		return (NULL);
-	}
-	if (ft_memcpy(&str[size1], str2, size2) == NULL)
-	{
-		free(str);
-		assert(0);
-		return (NULL);
-	}
-	str[size1 + size2] = '\0';
-	return (str);
-}
-
-int	find_dollar_symbol(const char *str, size_t start)
-{
-	size_t	i;
-	char	last_quote;
-	char	current;
-
-	if (str == NULL)
-		return (-1);
-	last_quote = '\0';
-	i = start;
-	while (i < ft_strlen(str))
-	{
-		current = str[i];
-		if (current == '\'' || current == '\"')
-		{
-			if (current == last_quote)
-				last_quote = '\0';
-			else if (last_quote == '\0')
-				last_quote = current;
-		}
-		if (str[i] == '$' && last_quote != '\'')
-			return (i);
-		++i;
-	}
-	return (-1);
-}
-
-int	get_delimator(const char *str, const int start)
-{
-	int	i;
-	char	a;
-
-	i = start;
-	while (str[i] != '\0')
-	{
-		a = str[i];
-		if (a == ' ' || a == '|' || a == '<' || a == '>' || a == '\''
-			|| a == '\"' || a == '$' || a == '\n')
-			return (i);
-		++i;
-	}
-	return (i);
-}
-
-char	*ft_strndup(const char *str, const size_t n)
-{
-	char	*new_string;
-	size_t	i;
-	size_t	size;
-
-	i = 0;
-	if (*str == 0)
-		return (ft_calloc(1, 1));
-	size = ft_strlen(str);
-	new_string = (char *)malloc(size * sizeof(char) + 1);
-	if (new_string == NULL || size < 1)
-		return (NULL);
-	while (i < size && str[i] != 0 && i < n)
-	{
-		new_string[i] = str[i];
-		i++;
-	}
-	new_string[i] = 0;
-	return (new_string);
-}
-
-static char *create_exit_status(const char *str, const int last_return)
+static char	*create_exit_status(const char *str, const int last_return)
 {
 	char	*number;
 	char	*retval;
@@ -153,14 +60,14 @@ char	*extract_env_var(const char *str, const size_t start,
 		return (ft_strdup(""));
 	retval = ft_strdup(env);
 	free(to_expand);
-	return retval;
+	return (retval);
 }
 
 char	*expand_str(const char *str, const char *result,
 			const size_t start, const int last_rtn)
 {
 	size_t	symbol_pos;
-	int	delim_pos;
+	int		delim_pos;
 	char	*retval;
 	char	*temp;
 	char	*temp2;
@@ -179,10 +86,10 @@ char	*expand_str(const char *str, const char *result,
 
 char	*expand(const char *str, const int last_return)
 {
-	int	total;
-	int	next;
 	char	*result;
 	char	*temp;
+	int		total;
+	int		next;
 
 	total = 0;
 	next = 0;
@@ -191,7 +98,7 @@ char	*expand(const char *str, const int last_return)
 	{
 		next = find_dollar_symbol(str, total);
 		if (next == -1)
-			break;
+			break ;
 		temp = expand_str(str, result, total, last_return);
 		if (result != NULL)
 			free(result);

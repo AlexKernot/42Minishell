@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:55:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/09/25 18:03:15 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 15:20:45 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ int		builtin_exit(int ac, char *av[]);
 
 /* --- Builtin helper functions --- */
 
-int	run_builtin(char **substr);
+int		run_builtin(char **substr);
 t_bool	is_builtin(const char *str);
-int	validate_env_var_name(char *name);
+int		validate_env_var_name(char *name);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 22:18:59 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 22:15:49 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:49:07 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,32 +23,6 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/wait.h>
-
-/** 
- * @author Alex Kernot
- * STATIC:
- * checks if a command is a builtin by hashing the string then comparing it to
- * the predefined hash values for each builtin. It also checks the length of the
- * command just in case of hash collisions.
-*/
-t_bool	is_builtin(const char *str)
-{
-	if (ft_strncmp("echo", str, 4) == 0)
-		return (true);
-	if (ft_strncmp("pwd", str, 3) == 0)
-		return (true);
-	if (ft_strncmp("export", str, 6) == 0)
-		return (true);
-	if (ft_strncmp("cd", str, 2) == 0)
-		return (true);
-	if (ft_strncmp("unset", str, 5) == 0)
-		return (true);
-	if (ft_strncmp("env", str, 3) == 0)
-		return (true);
-	if (ft_strncmp("exit", str, 4) == 0)
-		return (true);
-	return (false);
-}
 
 /** 
  * @author Alex Kernot
@@ -105,6 +79,14 @@ int	run_path(char **substr)
 	exit(127);
 }
 
+static void	replace_env(int old_stdin, int old_stdout)
+{
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	dup2(old_stdin, STDIN_FILENO);
+	dup2(old_stdout, STDOUT_FILENO);
+}
+
 /**
  * @author Alex Kernot
  * @brief if there is only 1 command total to be run, this command will be
@@ -118,11 +100,10 @@ int	run_path(char **substr)
 */
 int	run_without_subshell(t_command *command, int last_return)
 {
-	int		pid;
-	int		retval;
+	int			pid;
+	int			retval;
 	const int	old_stdin = dup(STDIN_FILENO);
 	const int	old_stdout = dup(STDOUT_FILENO);
-	
 
 	if (redirect(command, old_stdin, last_return) == 1)
 		return (1);
@@ -137,10 +118,7 @@ int	run_without_subshell(t_command *command, int last_return)
 	if (pid != 0)
 	{
 		waitpid(pid, &retval, 0);
-		close(STDIN_FILENO);
-		close(STDOUT_FILENO);
-		dup2(old_stdin, STDIN_FILENO);
-		dup2(old_stdout, STDOUT_FILENO);
+		replace_env(old_stdin, old_stdout);
 		return (process_exit_status(retval));
 	}
 	signal(SIGQUIT, SIG_DFL);

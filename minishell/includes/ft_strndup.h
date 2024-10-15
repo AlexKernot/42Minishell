@@ -1,24 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   run.h                                              :+:      :+:    :+:   */
+/*   ft_strndup.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/25 18:59:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/15 15:33:44 by akernot          ###   ########.fr       */
+/*   Created: 2024/10/15 16:53:08 by akernot           #+#    #+#             */
+/*   Updated: 2024/10/15 17:23:09 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RUN_H
-# define RUN_H
+#ifndef FT_STRNDUP_H
+# define FT_STRNDUP_H
 
-# include "syntax_tree.h"
+# include "stddef.h"
 
-int		run(char *input);
-void	run_command(t_command *command, int last_return);
-int		run_without_subshell(t_command *segment, int last_return);
-int		process_exit_status(int retval);
-int		run_path(char **substr);
+char	*ft_strndup(const char *str, const size_t n);
 
 #endif

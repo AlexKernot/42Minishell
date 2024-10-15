@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 18:10:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 19:48:03 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:43:37 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 
 int	process_heredocs(t_command *command, int old_stdin, int last_return)
 {
-	int 		i;
 	t_redirect_type	type;
-	char		*delim_string;
-	int		fd;
+	char			*delim_string;
+	int				i;
+	int				fd;
 
 	i = 0;
 	while (i < command->redirects->size)
@@ -34,7 +34,7 @@ int	process_heredocs(t_command *command, int old_stdin, int last_return)
 		if (type != redir_delim)
 		{
 			++i;
-			continue;
+			continue ;
 		}
 		delim_string = command->redirects->array[i];
 		fd = delim(delim_string, old_stdin, last_return);
@@ -63,7 +63,7 @@ static char	*read_char_by_char(int fd)
 	static int	eof = 0;
 	char		buffer[4098];
 	char		*overflow;
-	int		read_return;
+	int			read_return;
 	size_t		i;
 
 	ft_memset(buffer, 0, sizeof(buffer));
@@ -73,8 +73,6 @@ static char	*read_char_by_char(int fd)
 	while (read_return == 1 && eof == 0)
 	{
 		read_return = read(fd, &buffer[i], 1);
-		if (read_return == -1)
-			perror("minishell: HEREDOC");
 		if (buffer[i] == '\n')
 			return (merge(overflow, buffer));
 		++i;
@@ -86,7 +84,7 @@ static char	*read_char_by_char(int fd)
 		}
 	}
 	eof = 1;
-	return merge(overflow, buffer);
+	return (merge(overflow, buffer));
 }
 
 static int	write_to_file(char *line, int last_return, int fd)

@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:54:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 16:56:51 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:59:00 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ char		**compress_env_vars(void);
 t_env_vars	*find_env_var(char *name);
 void		clear_env_vars(void);
 char		*ft_getenv(char	*const name);
+t_env_vars	*env_push_front(void);
 int			find_equal_sign(char *const string);
 
 #endif

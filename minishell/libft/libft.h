@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 21:24:21 by akernot           #+#    #+#             */
-/*   Updated: 2024/07/21 16:56:10 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 15:34:04 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ t_bool		ft_putchar(const char c);
 t_bool		ft_putendl(const char *s);
 t_bool		ft_putnbr(const int n);
 
-int		ft_printf(const char *format, ...);
+int			ft_printf(const char *format, ...);
 
 void		*ft_calloc(size_t nmemb, size_t size);
 char		*ft_strdup(const char *s);

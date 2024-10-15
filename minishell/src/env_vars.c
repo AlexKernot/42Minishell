@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 19:23:55 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 20:56:03 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 17:03:19 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,24 @@ t_env_vars	**get_env_vars(void)
 	return (&vars);
 }
 
-t_env_vars	*make_env_var(t_env_vars *current, char *name, char *value)
+static void	add_pwd(void)
 {
-	t_env_vars	*new;
+	t_env_vars	*current;
+	t_env_vars	*pwd;
+	char		cwd[128];
 
-	new = ft_calloc(1, sizeof(*current));
-	if (new == NULL)
-		return (new);
-	if (current == NULL)
-		*get_env_vars() = new;
+	current = *get_env_vars();
+	while (current != NULL && current->next != NULL)
+		current = current->next;
+	pwd = find_env_var("PWD");
+	getcwd(cwd, sizeof(cwd));
+	if (pwd == NULL)
+		make_env_var(current, ft_strdup("PWD"), ft_strdup(cwd));
 	else
-		current->next = new;
-	new->name = name;
-	new->val = value;
-	new->next = NULL;
-	return (new);
+	{
+		free(pwd->val);
+		pwd->val = ft_strdup(cwd);
+	}
 }
 
 /**
@@ -58,8 +61,6 @@ t_env_vars	*make_env_var(t_env_vars *current, char *name, char *value)
 void	init_env_vars(char *const envp[])
 {
 	t_env_vars	*current;
-	t_env_vars	*pwd;
-	char			cwd[128];
 	int			i;
 	int			size;
 
@@ -72,22 +73,14 @@ void	init_env_vars(char *const envp[])
 		{
 			current = make_env_var(current, ft_strdup("OLDPWD"), NULL);
 			++i;
-			continue;
+			continue ;
 		}
 		current = make_env_var(current, ft_substr(envp[i], 0, size),
-			ft_substr(envp[i], size + 1, ft_strlen(envp[i]) - size)
-		);
+				ft_substr(envp[i], size + 1,
+					ft_strlen(envp[i]) - size));
 		++i;
 	}
-	pwd = find_env_var("PWD");
-	getcwd(cwd, sizeof(cwd));
-	if (pwd == NULL)
-		make_env_var(current, ft_strdup("PWD"), ft_strdup(cwd));
-	else
-	{
-		free(pwd->val);
-		pwd->val = ft_strdup(cwd);
-	}
+	add_pwd();
 }
 
 /**
@@ -113,7 +106,7 @@ char	**compress_env_vars(void)
 			array[i] = ft_strdup(envp->name);
 			++i;
 			envp = envp->next;
-			continue;
+			continue ;
 		}
 		tmp = ft_strjoin(envp->name, "=");
 		array[i] = ft_strjoin(tmp, envp->val);

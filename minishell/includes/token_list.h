@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 17:28:49 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 18:38:29 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 15:18:48 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,11 @@ typedef struct s_token_list
 }	t_token_list;
 
 t_token_list	*create_token_list(void);
-void		push_token(t_token_list *token_list, char *string);
-char		*get_token(const t_token_list *token_list, uint16_t index);
-void		delete_token_list(t_token_list **token_list);
-void		resize(t_token_list *token_list, uint16_t size);
-uint16_t	token_list_size(const t_token_list *token_list);
+char			*get_token(const t_token_list *token_list,
+					uint16_t index);
+void			push_token(t_token_list *token_list, char *string);
+void			delete_token_list(t_token_list **token_list);
+void			resize(t_token_list *token_list, uint16_t size);
+uint16_t		token_list_size(const t_token_list *token_list);
 
 #endif

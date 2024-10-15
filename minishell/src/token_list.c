@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/06 17:50:47 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/11 19:47:05 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:50:50 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 t_token_list	*create_token_list(void)
 {
 	t_token_list	*list;
-	char		**array;
+	char			**array;
 
 	list = (t_token_list *)malloc(sizeof(*list));
 	if (list == NULL)
@@ -34,7 +34,7 @@ t_token_list	*create_token_list(void)
 	return (list);
 }
 
-void		resize(t_token_list *token_list, uint16_t size)
+void	resize(t_token_list *token_list, uint16_t size)
 {
 	char	**new_array;
 	int		i;
@@ -59,7 +59,7 @@ void	push_token(t_token_list *token_list, char *string)
 {
 	char		**array;
 	uint16_t	size;
-	
+
 	if (token_list->size + 1 >= token_list->capacity)
 		resize(token_list, token_list->capacity * 2);
 	array = token_list->array;
@@ -70,12 +70,12 @@ void	push_token(t_token_list *token_list, char *string)
 	return ;
 }
 
-void		delete_token_list(t_token_list **token_list)
+void	delete_token_list(t_token_list **token_list)
 {
 	uint16_t	i;
 
 	if (token_list == NULL || (*token_list) == NULL)
-		return;
+		return ;
 	if ((*token_list)->array != NULL)
 	{
 		i = 0;
@@ -89,20 +89,4 @@ void		delete_token_list(t_token_list **token_list)
 	}
 	free(*token_list);
 	*token_list = NULL;
-}
-
-uint16_t	token_list_size(const t_token_list *token_list)
-{
-	if (token_list == NULL)
-		return (0);
-	return (token_list->size);
-}
-
-char	*get_token(const t_token_list *token_list, uint16_t index)
-{
-	if (token_list == NULL || token_list->array == NULL)
-		return (NULL);
-	if (index >= token_list->size)
-		return (NULL);
-	return (token_list->array[index]);
 }

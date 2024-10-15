@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 15:30:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 19:08:38 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:21:40 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@
 #include "builtin.h"
 #include "redirect.h"
 
-static int create_subshell(t_command *cmd, int in_fd, int out_fd,
+static int	create_subshell(t_command *cmd, int in_fd, int out_fd,
 				int last_return)
 {
-	pid_t 		pid;
-	int 		retval;
+	pid_t	pid;
+	int		retval;
 
 	pid = fork();
 	if (pid != 0)
@@ -49,11 +49,11 @@ static int create_subshell(t_command *cmd, int in_fd, int out_fd,
 	exit(1);
 }
 
-static int run_pipe(t_syntax_tree *tree, int in_fd, int out_fd, int last_return)
+static int	run_pipe(t_syntax_tree *tree, int in_fd, int out_fd,
+			int last_return)
 {
-	int fds[2];
-	int retval1;
-	int retval2;
+	int	fds[2];
+	int	retval;
 
 	if (tree == NULL || tree->left == NULL || tree->right == NULL)
 	{
@@ -65,18 +65,16 @@ static int run_pipe(t_syntax_tree *tree, int in_fd, int out_fd, int last_return)
 		write(STDERR_FILENO, "Could not create pipes\n", 23);
 		return (1);
 	}
-	retval1 = evaluate_commands(tree->left, in_fd, fds[WRITE_FD],
-					last_return);
+	(void)evaluate_commands(tree->left, in_fd, fds[WRITE_FD], last_return);
 	close(fds[WRITE_FD]);
-	// if (retval1 != 0)
-	//	return (retval1);
-	retval2 = evaluate_commands(tree->right, fds[READ_FD], out_fd,
-					last_return);
+	retval = evaluate_commands(tree->right, fds[READ_FD], out_fd,
+			last_return);
 	close(fds[READ_FD]);
-	return (retval2);
+	return (retval);
 }
 
-static int single(t_syntax_tree *tree, int in_fd, int out_fd, int last_return)
+static int	single(t_syntax_tree *tree, int in_fd, int out_fd,
+			int last_return)
 {
 	if (tree == NULL || tree->left == NULL || tree->right != NULL)
 	{
@@ -90,7 +88,7 @@ static int single(t_syntax_tree *tree, int in_fd, int out_fd, int last_return)
 int	evaluate_commands(t_syntax_tree *tree, int in_fd, int out_fd,
 				int last_return)
 {
-	char *operator;
+	char	*operator;
 
 	if (tree == NULL)
 		return (1);
@@ -98,7 +96,7 @@ int	evaluate_commands(t_syntax_tree *tree, int in_fd, int out_fd,
 	{
 		return (create_subshell
 			(tree->contents.contents.command, in_fd, out_fd,
-					last_return));
+				last_return));
 	}
 	operator = tree->contents.contents.operator_word;
 	if (operator[0] == '|' && operator[1] == '\0')

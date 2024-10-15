@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 23:17:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 22:16:37 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 15:55:35 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 #include "environment_variables.h"
 #include "expand.h"
 
-static int is_one_command(t_syntax_tree *tree)
+static int	is_one_command(t_syntax_tree *tree)
 {
 	if (tree == NULL)
 		return (0);
@@ -42,18 +42,18 @@ static int is_one_command(t_syntax_tree *tree)
 
 static int	run_tree(t_syntax_tree *tree, int last_return)
 {
-	int ret;
+	int	ret;
 
 	if (is_one_command(tree) == 1)
 	{
 		ret = run_without_subshell
 			(tree->left->contents.contents.command, last_return);
-		return ret;
+		return (ret);
 	}
 	else
 	{
 		return (evaluate_commands(tree,
-			STDIN_FILENO, STDOUT_FILENO, last_return));
+				STDIN_FILENO, STDOUT_FILENO, last_return));
 	}
 }
 
@@ -65,10 +65,10 @@ static int	run_tree(t_syntax_tree *tree, int last_return)
 */
 int	run(char *input)
 {
-	static int	last_return = 0;
-	char		*expanded;
+	static int		last_return = 0;
 	t_token_list	*tokens;
 	t_syntax_tree	*tree;
+	char			*expanded;
 
 	if (input == NULL || input[0] == '\0' || input[0] == '\n')
 		return (0);

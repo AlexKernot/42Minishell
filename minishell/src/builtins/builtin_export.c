@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 17:21:45 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 21:06:58 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:58:05 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 */
 static void	print_envs(void)
 {
-	const t_env_vars *env = *(get_env_vars());
+	const t_env_vars	*env = *(get_env_vars());
 
 	while (env != NULL)
 	{
@@ -66,24 +66,6 @@ static void	insert(t_env_vars *found, char *name, char *value)
 		found->val = NULL;
 	}
 	return ;
-}
-
-/**
- * @author Prachi Chawda
- * STATIC:
- * Creates a new environment variable set to null and pushes it onto
- * the front of the environment variable list.
-*/
-static t_env_vars	*env_push_front(void)
-{
-	t_env_vars	*head;
-	t_env_vars	*retval;
-
-	head = *get_env_vars();
-	retval = ft_calloc(1, sizeof(*retval));
-	retval->next = head;
-	*get_env_vars() = retval;
-	return (retval);
 }
 
 static void	add_env_var(char *var)

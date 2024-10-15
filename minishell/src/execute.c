@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 23:02:00 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 22:00:52 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 15:58:09 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	minishell_error(const char *file, const char *error, const int retval)
 void	check_file(const char *path)
 {
 	struct stat	results;
-	int		stat_retval;
+	int			stat_retval;
 
 	if (access(path, F_OK) != 0)
 		minishell_error(path, "No such file or directory", 127);
@@ -83,7 +83,7 @@ void	check_file(const char *path)
 		minishell_error(NULL, "does not exist", 127);
 	if (S_ISDIR(results.st_mode))
 		minishell_error(path, "is a directory", 126);
-	if ((results.st_mode&S_IXGRP) == 0)
+	if ((results.st_mode & S_IXGRP) == 0)
 		minishell_error(path, "Permission denied", 126);
 }
 

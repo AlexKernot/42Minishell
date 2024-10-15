@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   run.h                                              :+:      :+:    :+:   */
+/*   search_string.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/25 18:59:38 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/15 15:33:44 by akernot          ###   ########.fr       */
+/*   Created: 2024/10/15 16:55:55 by akernot           #+#    #+#             */
+/*   Updated: 2024/10/15 17:24:01 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RUN_H
-# define RUN_H
+#ifndef SEARCH_STRING_H
+# define SEARCH_STRING_H
 
-# include "syntax_tree.h"
+# include "stddef.h"
 
-int		run(char *input);
-void	run_command(t_command *command, int last_return);
-int		run_without_subshell(t_command *segment, int last_return);
-int		process_exit_status(int retval);
-int		run_path(char **substr);
+int	get_delimator(const char *str, const int start);
+int	find_dollar_symbol(const char *str, size_t start);
 
 #endif

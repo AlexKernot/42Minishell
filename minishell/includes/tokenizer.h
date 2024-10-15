@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 15:18:02 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/20 16:42:39 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 17:19:37 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef enum e_char_classification
 	none_c,
 	letter_c,
 	symbol_c
-} t_char_class;
+}	t_char_class;
 
 /* The allowed symbols in a minishell command. */
 typedef enum e_symbols
@@ -91,7 +91,7 @@ char			*extract_string(const char *string,
  */	
 void			add_words(t_token_list *tokens, const char *string,
 					const uint16_t start, const uint16_t end);
-	
+
 /**
  * @author Alex Kernot
  * @brief Splits part of a string containing symbols into smaller strings
@@ -104,7 +104,7 @@ void			add_words(t_token_list *tokens, const char *string,
  */
 void			add_symbols(t_token_list *tokens, const char *string,
 					const uint16_t start, const uint16_t end);
-			
+
 /**
  * @author Alex Kernot
  * @brief Iterates over the string, splitting it into smaller substrings to be
@@ -124,6 +124,9 @@ void			parse(t_token_list *token_list, const char *string);
 t_symbols		get_symbols(const char a);
 
 uint16_t		split(t_token_list *token_list, const char *string,
-				const uint16_t start, t_char_class type);
+					const uint16_t start,
+					t_char_class type);
+
+char			handle_quote(const char a, const char quote);
 
 #endif

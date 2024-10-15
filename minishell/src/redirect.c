@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 15:24:46 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 19:30:34 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:10:23 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ static int	open_file(char *file, t_redirect_type type)
 */
 int	redirect(t_command *command, int old_stdin, int last_return)
 {
-	int			i;
-	int			fd;
 	t_redirect_type	type;
-	char		*file;
+	char			*file;
+	int				i;
+	int				fd;
 
 	i = 0;
 	process_heredocs(command, old_stdin, last_return);

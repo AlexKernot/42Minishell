@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/26 18:03:12 by akernot           #+#    #+#             */
-/*   Updated: 2024/10/14 17:44:10 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 15:57:27 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ long	ft_atol(const char *nptr)
 int	ft_is_long(const char *nptr)
 {
 	unsigned long	converted;
-	size_t		negative;
-	size_t		i;
+	size_t			negative;
+	size_t			i;
 
 	converted = 0;
 	negative = 0;

@@ -1,7 +1,7 @@
 NAME=minishell
 
 CC = clang
-CFLAGS = -MD -Wall -Wextra -Wpedantic -g -std=c11 -I./libft/ -I./includes/
+CFLAGS = -MD -Wall -Wextra -Werror -g -I./libft/ -I./includes/
 LDFLAGS = -lreadline
 
 FILES = run.c execute.c vector_subset.c process.c hash_func.c \
@@ -11,7 +11,10 @@ FILES = run.c execute.c vector_subset.c process.c hash_func.c \
 	builtin_echo.c builtin_env.c builtin_exit.c builtin_export.c \
 	builtin_pwd.c builtin_unset.c builtin_cd.c \
 	tokenizer.c token_list.c syntax_tree.c shunting_yard.c \
-	ft_stack.c evaluator.c expand.c ft_atol.c heredoc.c
+	ft_stack.c evaluator.c expand.c ft_atol.c heredoc.c add_syntax_tree.c \
+	token_checks.c add_tokens.c extract_string.c stack_utils.c \
+	token_list_utils.c ft_strndup.c ft_strnjoin.c search_string.c \
+	add_env_vars.c read_stream.c convert_postfix.c
 
 OUTPUTDIR = ./bin
 
