@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 14:53:56 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/18 17:42:41 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 18:22:49 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ extern "C" {
 	#include "ft_pipe.h"
 } 
 
-void createError(const std::source_location& loc, int fd, const char *str, ...)
+void createError(int fd, const char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
@@ -36,15 +36,15 @@ void createError(const std::source_location& loc, int fd, const char *str, ...)
 		return ;
 	}
 	std::stringstream strstr;
-	strstr << "\e[0;31mAssert failed.\e[0m [" << loc.function_name() << "] "
-		<< loc.file_name() << ", line " << loc.line() << ":\n	"
+	strstr << "\e[0;31mAssert failed.\e[0m [" << "unsupported" << "] "
+		<< "unsupported" << ", line " << "unsupported" << ":\n	"
 		<< str << "\n";
 	transmit(fd, strstr.str().c_str());
 	va_end(args);
 	exit(1);
 }
 
-void createError(const std::source_location& loc, const char *str, ...)
+void createError(const char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
@@ -53,8 +53,8 @@ void createError(const std::source_location& loc, const char *str, ...)
 		return ;
 	}
 	std::stringstream strstr;
-	strstr << " [" << loc.function_name() << "] "
-		<< loc.file_name() << ", line " << loc.line() << ":\n	"
+	strstr << " [" << "unsupported" << "] "
+		<< "unsupported" << ", line " << "unsupported" << ":\n	"
 		<< str << "\n";
 	std::cerr << strstr.str() << "\n";
 	va_end(args);
@@ -74,15 +74,6 @@ std::string individualTest::getTestName() const
 individualTest::individualTest(std::string test)
 {
 	testName = test;
-}
-
-std::string individualTest::createLocationString(const std::source_location& loc)
-{
-	std::stringstream str;
-	
-	str << testName << " [" << loc.function_name() << "] "
-		<< loc.file_name() << ", line " << loc.line() << ":\n	";
-	return str.str();
 }
 
 std::string individualTest::createCrash(int retval) const

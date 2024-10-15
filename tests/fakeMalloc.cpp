@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:29:19 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/09 13:54:37 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 18:26:22 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ extern "C" {
 #ifndef DEBUG
 
 // A really bad malloc override for testing my program
-char fake_heap[4096];
+char fake_heap[10000];
 int alloc_addr[sizeof(fake_heap)];
 
 int forceNull = 0;
@@ -44,7 +44,7 @@ static char sanitize_char(int a)
 	return (char)a;
 }
 
-void check_memory(const std::source_location& loc, int logFD)
+void check_mem(int logFD)
 {
 	bool leaksDetected = false;
 	std::stringstream str;
@@ -55,7 +55,7 @@ void check_memory(const std::source_location& loc, int logFD)
 			continue;
 		}
 		if (leaksDetected == false) {
-			str << "\e[0;33mMemory leaks detected at line " << loc.line()
+			str << "\e[0;33mMemory leaks detected at line " << "unsupported"
 			<< "\e[0m\n";
 			leaksDetected = true;
 		}
@@ -180,9 +180,8 @@ extern "C" void malloc_revert()
 	return ;
 }
 
-void check_memory(const std::source_location& loc, int logFD)
+void check_mem(int logFD)
 {
-	(void)loc;
 	(void)logFD;
 	return ;
 }

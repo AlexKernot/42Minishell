@@ -6,12 +6,12 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/09/25 17:52:39 by akernot          ###   ########.fr        #
+#    Updated: 2024/10/15 18:26:51 by akernot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CXXFLAGS = -Wall -Wextra -DDEBUG -fno-builtin -g -I./minishell/includes -I./tests/ -I./tests/includes -I./minishell/libft -std=c++20
+CXXFLAGS = -Wall -DDEBUG -Wextra -fno-builtin -g -I./minishell/includes -I./tests/ -I./tests/includes -I./minishell/libft -std=c++17
 LDFLAGS = -lreadline
 
 OUTPUTDIR = ./bin

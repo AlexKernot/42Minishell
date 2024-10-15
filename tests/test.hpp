@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:59:37 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/08 18:34:16 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 18:24:22 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ extern "C" {
 	#include "tokenizer.h"
 }
 
-void check_memory(const std::source_location& loc, int logFD);
-# define check_mem(logFD) check_memory(std::source_location::current(), logFD)
+void check_mem(int logFD);
 
 // helper functions used for testing
 std::string sanitizeString(const char *dest);

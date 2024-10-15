@@ -6,7 +6,7 @@
 /*   By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 15:05:00 by akernot           #+#    #+#             */
-/*   Updated: 2024/08/07 18:04:48 by akernot          ###   ########.fr       */
+/*   Updated: 2024/10/15 18:21:48 by akernot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 # include <unistd.h>
 
 
-void createError(const std::source_location& loc, int fd, const char *str, ...);
+void createError(int fd, const char *str, ...);
 # undef fassert
-# define fassert(fd, cmp) createError(std::source_location::current(), fd, #cmp, cmp);
+# define fassert(fd, cmp) createError(fd, #cmp, cmp);
 # undef passert
-# define passert(cmp) createError(std::source_location::current(), #cmp, cmp);
+# define passert(cmp) createError(#cmp, cmp);
 
 
 class individualTest {
@@ -37,7 +37,6 @@ private:
 	std::string testName;
 	std::string returnWait(pid_t pid, int readFD) const;
 	std::string createCrash(int retval) const;
-	std::string createLocationString(const std::source_location& loc);
 };
 
 #endif // INDIVIDUALTEST_HPP
