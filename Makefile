@@ -6,12 +6,12 @@
 #    By: akernot <a1885158@adelaide.edu.au>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/04 17:22:57 by akernot           #+#    #+#              #
-#    Updated: 2024/10/15 18:28:56 by akernot          ###   ########.fr        #
+#    Updated: 2024/10/15 18:54:53 by alexkernot       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = g++
-CXXFLAGS = -Wall -DDEBUG -Wextra -fno-builtin -g -I./minishell/includes -I./tests/ -I./tests/includes -I./minishell/libft -std=c++17
+CXXFLAGS = -Wall -DDEBUG -Wextra -fno-builtin -g -I../includes -I./tests/ -I./tests/includes -I../libft -std=c++17
 LDFLAGS = -lreadline
 
 OUTPUTDIR = ./bin
@@ -33,7 +33,7 @@ $(OUTPUTDIR)/%.o: %.cpp
 all: unit
 
 lib:
-	make lib -C ./minishell/
+	make lib -C ../
 	mv ../minishell.a ./minishell.a
 
 binary:
@@ -41,7 +41,7 @@ binary:
 	mv ../minishell ./integrationTests/minishell
 
 unit: lib binary $(OBJ)
-	$(CXX) $(LDFLAGS) ./minishell.a ./minishell/bin/libft.a $(OBJ)
+	$(CXX) $(LDFLAGS) ./minishell.a ../bin/libft.a $(OBJ)
 
 clean:
 	-rm -f $(OBJ) minishell.a ./integrationTests/minishell
